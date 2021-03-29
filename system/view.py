@@ -1,4 +1,5 @@
 from flask import Blueprint, request, make_response, render_template, jsonify
+from flask_cors import CORS
 from sqlalchemy import text
 import json
 from init import db
@@ -7,19 +8,25 @@ from model.user import User
 # 蓝图对象，前端页面
 welcome = Blueprint('welcome', __name__)
 
-@welcome.route('/vue')
-def vue():
-    return render_template("index.html")
 
-@welcome.route('/')
-def login():
-
-    context = {}
+@welcome.route('/',methods=['GET', 'POST'])
+def index():
+    postform = request.form
+    # print(request.method)
+    # context = {}
     # sql = text('select * from `user`')
     # result = db.engine.execute(sql)
     # context['result'] = result
-    context['admin'] = User.query.all()
-    return render_template("index.html", **context)
+    # context['admin'] = User.query.all()
+    return render_template("index.html", name = "index")
+
+@welcome.route('/login', methods=['POST'])
+def loginConfirm():
+    # 如果前端传回来Bytes，用以下方法转成json
+    data = str(request.data,'utf-8')
+    form = json.loads(data)
+    print(form['user_name'])
+    return "xxx"
 
 # 比如： http://127.0.0.1:5000/manager
 @welcome.route('/manager')

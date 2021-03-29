@@ -1,7 +1,10 @@
 from flask import Flask, Blueprint
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-app = Flask(__name__)
+app = Flask(__name__,
+            static_folder="./templates/static",
+            template_folder="./templates",
+            )
 # 此文件仅用于初始化配置
 
 
