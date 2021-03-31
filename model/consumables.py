@@ -6,8 +6,8 @@ db = SQLAlchemy()
 
 
 
-class Consumable(db.Model):
-    __tablename__ = 'consumable'
+class Consumables(db.Model):
+    __tablename__ = 'consumables'
 
     consumableId = db.Column(db.Integer, primary_key=True, info='收费项目ID')
     name = db.Column(db.String(50, 'utf8_general_ci'), info='项目名称')

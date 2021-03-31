@@ -6,11 +6,11 @@ from init import db
 from model.case import Case
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
-case = Blueprint('caseModule', __name__,url_prefix='/caseModule')
+case = Blueprint('caseModule', __name__,url_prefix='/caseModule/case')
 
 
 @case.route("/add", methods=['GET', 'POST'])
-def addcase():
+def addCase():
     # html文件修改为新建题目的文件
     if request.method == "GET":
         return render_template("提交病例.html")

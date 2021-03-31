@@ -6,7 +6,7 @@ db = SQLAlchemy()
 
 
 
-class Execute(db.Model):
+class Executes(db.Model):
     __tablename__ = 'executes'
 
     executeId = db.Column(db.Integer, primary_key=True, info='执行类ID')

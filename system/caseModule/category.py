@@ -6,11 +6,11 @@ from init import db
 from model.category import Category
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
-category = Blueprint('categoryModule', __name__,url_prefix='/categoryModule')
+category = Blueprint('categoryModule', __name__,url_prefix='/caseModule/category')
 
 
 @category.route("/add", methods=['GET', 'POST'])
-def addcategory():
+def addCategory():
     # html文件修改为新建题目的文件
     if request.method == "GET":
         return render_template("提交分类.html")

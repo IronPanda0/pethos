@@ -6,11 +6,11 @@ from init import db
 from model.animal import Animal
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
-animal = Blueprint('animalModule', __name__,url_prefix='/animalModule')
+animal = Blueprint('animalModule', __name__,url_prefix='/caseModule/animal')
 
 
 @animal.route("/add", methods=['GET', 'POST'])
-def addanimal():
+def addAnimal():
     # html文件修改为新建题目的文件
     if request.method == "GET":
         return render_template("提交宠物.html")

@@ -6,14 +6,14 @@ from init import db
 from model.disease import Disease
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
-disease = Blueprint('diseaseModule', __name__,url_prefix='/diseaseModule')
+disease = Blueprint('diseaseModule', __name__,url_prefix='/caseModule/disease')
 
 
 @disease.route("/add", methods=['GET', 'POST'])
-def adddisease():
+def addDisease():
     # html文件修改为新建题目的文件
     if request.method == "GET":
-        return render_template("提交宠物.html")
+        return render_template("提交疾病.html")
     elif request.method == "POST":
         req = request.values
         # 暂时略过合法性检测
