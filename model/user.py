@@ -6,12 +6,11 @@ from init import db
 # User(大小写不区分）对应数据库里的表名，Id、Username、Password对应列名
 class User( db.Model ):
     __tablename__="user"
-
-    Id = db.Column (db.String(10), primary_key=True)
-    Username = db.Column( db.String( 12 ) )
-
+    userId = db.Column (db.Integer, primary_key=True)
+    userName = db.Column( db.String( 12 ) )
+    passWord = db.Column(db.String(18))
 
 # UserP继承的是User类，那么UserP也会去查询数据库中的"user"表
 # 所以UserP会查出Id、Username和Password
-class UserP (User):
-    Password = db.Column(db.String(18))
+# class UserP (User):
+#     passWord = db.Column(db.String(18))

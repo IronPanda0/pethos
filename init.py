@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__,
             static_folder="./templates/static",
             template_folder="./templates",
