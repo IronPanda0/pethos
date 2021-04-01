@@ -36,8 +36,43 @@ def addQuestion():
         model_question.choiceC = choiceC
         model_question.choiceD = choiceD
         model_question.answer = answer
+        model_question.score = score
         model_question.diseaseName = diseaseName
         db.session.add(model_question)
         db.session.commit()
-        return ops_renderErrJSON(msg = "添加成功")
+        # json化data
+        temp = {}
+        temp["questionInfo"] = questionInfo
+        temp["answer"] = answer
+        temp["choiceA"] = choiceA
+        temp["choiceB"] = choiceB
+        temp["choiceC"] = choiceC
+        temp["choiceD"] = choiceD
+        temp["score"] = score
+        temp["diseaseName"] = diseaseName
+        data = []
+        data.append(temp)
+        return ops_renderJSON(msg="添加成功", data=data)
     return "添加成功"
+
+
+@question.route("/list", methods=['POST'])
+def searchCategory():
+    if request.method == 'POST':
+        result = db.session.query(Question).all()
+        temp = {}
+        data = []
+        if (result != None):
+            for i in result:
+                temp["questionInfo"] = i.questionInfo
+                temp["answer"] = i.answer
+                temp["choiceA"] = i.choiceA
+                temp["choiceB"] = i.choiceB
+                temp["choiceC"] = i.choiceC
+                temp["choiceD"] = i.choiceD
+                temp["score"] = i.score
+                temp["diseaseName"] = i.diseaseName
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有题目")

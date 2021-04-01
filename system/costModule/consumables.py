@@ -23,7 +23,7 @@ def addConsumables():
         pay = req['pay']
         nameD = Consumables.query.filter_by(name = name).first()
         if nameD:
-            return ops_renderErrJSON(msg="相同项目已存在，请再换一个试试")
+            return ops_renderJSON(msg="相同项目已存在，请再换一个试试")
         # 注册写入数据库
         model_consumables = Consumables()
         model_consumables.type = type
@@ -32,5 +32,5 @@ def addConsumables():
         model_consumables.pay = pay
         db.session.add(model_consumables)
         db.session.commit()
-        return ops_renderErrJSON(msg = "添加成功")
+        return ops_renderErrJSON(msg="添加成功", data=model_consumables)
     return "添加成功"

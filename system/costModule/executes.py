@@ -6,7 +6,7 @@ from init import db
 from model.executes import Executes
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
-executes = Blueprint('executesModule', __name__,url_prefix='/costModule/executes')
+executes = Blueprint('executes', __name__, url_prefix='/costModule/executes')
 
 
 @executes.route("/add", methods=['GET', 'POST'])
@@ -30,5 +30,5 @@ def addExecutes():
         model_executes.pay = pay
         db.session.add(model_executes)
         db.session.commit()
-        return ops_renderErrJSON(msg = "添加成功")
+        return ops_renderJSON(msg="添加成功")
     return "添加成功"

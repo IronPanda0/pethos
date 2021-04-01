@@ -2,7 +2,8 @@
 SQLyog Ultimate v12.09 (64 bit)
 MySQL - 8.0.18 : Database - coursedb
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -187,7 +188,7 @@ CREATE TABLE `paperquestion` (
 
 /*Data for the table `paperquestion` */
 
-/*Table structure for table `question` */
+/*Table structure for table `testModule` */
 
 DROP TABLE IF EXISTS `question`;
 
@@ -205,7 +206,7 @@ CREATE TABLE `question` (
   PRIMARY KEY (`questionId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
-/*Data for the table `question` */
+/*Data for the table `testModule` */
 
 insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseId`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,1,'狂犬病',5,'选A','选B','选C','选D'),(2,'题目1',1,1,NULL,NULL,NULL,NULL,NULL,NULL),(3,'题干题干',1,NULL,'狂犬病',NULL,'选项','选项','选项','选项');
 
