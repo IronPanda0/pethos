@@ -56,7 +56,6 @@ def listDisease():
 
     return ops_renderJSON(msg="添加成功")
 
-
 # 根据分类名称返回所有疾病
 @disease.route("/search", methods=['POST'])
 def searchDisease():
@@ -76,4 +75,4 @@ def searchDisease():
         else:
             return ops_renderErrJSON(msg="查询失败，目前该分类没有疾病")
 
-    return ops_renderJSON(msg="添加成功")
+    return ops_renderJSON(msg="查询成功")

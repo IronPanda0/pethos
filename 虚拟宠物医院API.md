@@ -78,13 +78,94 @@
         },
         {
             "answer": 1,
-            "choiceA": null,
-            "choiceB": null,
-            "choiceC": null,
-            "choiceD": null,
-            "diseaseName": null,
-            "questionInfo": "题目1",
+            "choiceA": "选项",
+            "choiceB": "选项",
+            "choiceC": "选项",
+            "choiceD": "选项",
+            "diseaseName": "狂犬病",
+            "questionInfo": "题干题干",
             "score": null
+        },
+        {
+            "answer": 1,
+            "choiceA": "选项",
+            "choiceB": "选项",
+            "choiceC": "选项",
+            "choiceD": "选项",
+            "diseaseName": "狂犬病",
+            "questionInfo": "题干题干题干",
+            "score": 10
+        },
+        {
+            "answer": 1,
+            "choiceA": "选项",
+            "choiceB": "选项",
+            "choiceC": "选项",
+            "choiceD": "选项",
+            "diseaseName": "狂犬病",
+            "questionInfo": "题干题干题干题干",
+            "score": 10
+        },
+        {
+            "answer": 1,
+            "choiceA": "选项",
+            "choiceB": "选项",
+            "choiceC": "选项",
+            "choiceD": "选项",
+            "diseaseName": "狂犬病",
+            "questionInfo": "题干题干题干题干题干",
+            "score": 10
+        },
+        {
+            "answer": 1,
+            "choiceA": "选项",
+            "choiceB": " 选项",
+            "choiceC": "选项",
+            "choiceD": "选项",
+            "diseaseName": "感染病",
+            "questionInfo": "感染病题干",
+            "score": 5
+        }
+    ],
+    "msg": "查询成功"
+}
+```
+
+- 返回参数（失败）
+
+```json
+{
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前没有试题"
+}
+```
+
+### 查询试题
+
+- 接口URL：`/question/search`
+- 请求方式：`POST`
+- 参数说明：
+
+|    参数     |   中文   | 是否必须 |  类型  | 备注 |  案例  |
+| :---------: | :------: | :------: | :----: | :--: | :----: |
+| diseaseName | 病种名称 |    是    | string |      | 狂犬病 |
+
+- 返回参数（成功）
+
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "answer": 1,
+            "choiceA": "选A",
+            "choiceB": "选B",
+            "choiceC": "选C",
+            "choiceD": "选D",
+            "diseaseName": "狂犬病",
+            "questionInfo": "题目1",
+            "score": 5
         },
         {
             "answer": 1,
@@ -135,9 +216,131 @@
 
 ```json
 {
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前该病种没有试题"
+}
+```
+
+## 试卷类
+
+## 考试类
+
+### 添加考试
+
+- 接口URL：`/test/add`
+- 请求方式：`POST`
+- 参数说明：
+
+|    参数     |   中文   | 是否必须 |  类型  | 备注 |        案例        |
+| :---------: | :------: | :------: | :----: | :--: | :----------------: |
+|  testName   | 考试名称 |    是    | string |      |      期末考试      |
+| diseaseName | 相关病种 |    是    | string |      |       狂犬病       |
+|  paperName  | 试卷名称 |    是    | string |      | 期末考试狂犬病试卷 |
+|  beginTime  | 考试时间 |    是    | string |      |   20210301 8:00    |
+|   endTime   | 结束时间 |    是    | string |      |   20210301 10:00   |
+
+- 返回参数（成功）
+
+```json
+{
     "code": 200,
-    "data": [],
+    "data": [
+        {
+            "beginTime": "Mon, 01 Mar 2021 08:00:00 GMT",
+            "diseaseName": "狂犬病",
+            "endTime": "Mon, 01 Mar 2021 10:00:00 GMT",
+            "paperName": "期中考试狂犬病试卷",
+            "testName": "期中考试"
+        }
+    ],
+    "msg": "添加成功"
+}
+```
+
+- 返回参数（失败）
+
+```json
+{
+    "code": -1,
+    "data": {},
+    "msg": "相同考试已存在，请再换一个试试"
+}
+```
+
+### 返回全部考试
+
+- 接口URL：`/test/list`
+- 请求方式：`POST`
+- 参数说明：
+
+| 参数 | 中文 | 是否必须 | 类型 | 备注 | 案例 |
+| :--: | :--: | :------: | :--: | :--: | :--: |
+|  无  |      |          |      |      |      |
+
+- 返回参数（成功）
+
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "beginTime": "Mon, 01 Mar 2021 08:00:00 GMT",
+            "diseaseName": "狂犬病",
+            "endTime": "Mon, 01 Mar 2021 10:00:00 GMT",
+            "paperName": "期中考试狂犬病试卷",
+            "testName": "期中考试"
+        }
+    ],
     "msg": "查询成功"
+}
+```
+
+- 返回参数（失败）
+
+```json
+{
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前没有考试"
+}
+```
+
+### 查询考试
+
+- 接口URL：`/test/search`
+- 请求方式：`POST`
+- 参数说明：
+
+|   参数   |   中文   | 是否必须 |  类型  | 备注 |   案例   |
+| :------: | :------: | :------: | :----: | :--: | :------: |
+| testName | 考试名称 |    是    | string |      | 期中考试 |
+
+- 返回参数（成功）
+
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "beginTime": "Mon, 01 Mar 2021 08:00:00 GMT",
+            "diseaseName": "狂犬病",
+            "endTime": "Mon, 01 Mar 2021 10:00:00 GMT",
+            "paperName": "期中考试狂犬病试卷",
+            "testName": "期中考试"
+        }
+    ],
+    "msg": "查询成功"
+}
+```
+
+- 返回参数（失败）
+
+```json
+{
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前没有这场考试"
 }
 ```
 
@@ -225,23 +428,36 @@
 ### 更新病例
 
 - 接口URL：`/category/update`
-- url式：`POST`
+- 请求方式：`POST`
 - 参数说明：
 
-| 参数 | 中文 | 是否必须 | 类型 | 备注 | 案例 |
-| :--: | :--: | :------: | :--: | :--: | :--: |
-|  无  |      |          |      |      |      |
+|      参数       |   中文   | 是否必须 |  类型  | 备注 |    案例    |
+| :-------------: | :------: | :------: | :----: | :--: | :--------: |
+| categoryNameNew | 分类名称 |    是    | string |      | 呼吸道疾病 |
+| categoryNameOld | 分类名称 |    是    | string |      |   传染病   |
 
 - 返回参数（成功）
 
 ```json
-实现中
+{
+    "code": 200,
+    "data": [
+        {
+            "categoryName": "呼吸道疾病"
+        }
+    ],
+    "msg": "修改成功"
+}
 ```
 
 - 返回参数（分类表为空）
 
 ```json
-实现中
+{
+    "code": -1,
+    "data": {},
+    "msg": "分类已经存在，请换一个再试试。"
+}
 ```
 
 ### 删除病例
