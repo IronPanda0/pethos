@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
 from flask import Flask, Blueprint, render_template
 from flask_login import LoginManager
 from flask_cors import CORS

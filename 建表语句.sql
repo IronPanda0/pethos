@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
 SQLyog Ultimate v12.09 (64 bit)
 MySQL - 8.0.18 : Database - coursedb
@@ -304,6 +305,8 @@ CREATE TABLE `user` (
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 =======
+=======
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
 /*
 SQLyog Ultimate v12.09 (64 bit)
 MySQL - 8.0.18 : Database - coursedb
@@ -391,11 +394,19 @@ CREATE TABLE `category` (
   `categoryID` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `categoryName` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类名称',
   PRIMARY KEY (`categoryID`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 /*Data for the table `category` */
 
 insert  into `category`(`categoryID`,`categoryName`) values (19,'分类111');
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+/*Data for the table `category` */
+
+insert  into `category`(`categoryID`,`categoryName`) values (1,'传染病'),(20,'呼吸道疾病');
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
 
 /*Table structure for table `consumables` */
 
@@ -468,13 +479,21 @@ CREATE TABLE `paper` (
   `sum` int(11) DEFAULT NULL COMMENT '试卷总分',
   `num` int(11) DEFAULT NULL COMMENT '试卷题数',
   `diseaseId` int(11) DEFAULT NULL COMMENT '所属病种ID',
+<<<<<<< HEAD
   `deseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '所属病种名称',
+=======
+  `diseaseName` varchar(50) DEFAULT NULL COMMENT '所属病种名称',
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
   PRIMARY KEY (`paperId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paper` */
 
+<<<<<<< HEAD
 insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseId`,`deseaseName`) values (1,'期中考试',10,2,1,'狂犬病');
+=======
+insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseId`,`diseaseName`) values (1,'期中考试',10,2,1,'狂犬病');
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
 
 /*Table structure for table `paperquestion` */
 
@@ -505,11 +524,19 @@ CREATE TABLE `question` (
   `choiceC` varchar(50) DEFAULT NULL COMMENT '选项C',
   `choiceD` varchar(50) DEFAULT NULL COMMENT '选项D',
   PRIMARY KEY (`questionId`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Data for the table `question` */
 
 insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseId`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,1,'狂犬病',5,'选A','选B','选C','选D'),(2,'题目1',1,1,NULL,NULL,NULL,NULL,NULL,NULL),(3,'题干题干',1,NULL,'狂犬病',NULL,'选项','选项','选项','选项'),(4,'题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(5,'题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(6,'题干题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项');
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+/*Data for the table `question` */
+
+insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseId`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,1,'狂犬病',5,'选A','选B','选C','选D'),(3,'题干题干',1,NULL,'狂犬病',NULL,'选项','选项','选项','选项'),(4,'题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(5,'题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(6,'题干题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(7,'感染病题干',1,NULL,'感染病',5,'选项',' 选项','选项','选项');
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
 
 /*Table structure for table `room` */
 
@@ -559,16 +586,30 @@ DROP TABLE IF EXISTS `test`;
 
 CREATE TABLE `test` (
   `testId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '考试ID',
+<<<<<<< HEAD
   `paperId` int(11) DEFAULT NULL COMMENT '试卷ID',
+=======
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
   `testName` varchar(50) DEFAULT NULL COMMENT '考试名称',
   `paperName` varchar(50) DEFAULT NULL COMMENT '试卷名称',
   `beginTime` datetime DEFAULT NULL COMMENT '开始时间',
   `endTime` datetime DEFAULT NULL COMMENT '结束时间',
+<<<<<<< HEAD
   PRIMARY KEY (`testId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `test` */
 
+=======
+  `diseaseName` varchar(50) DEFAULT NULL COMMENT '相关病种',
+  PRIMARY KEY (`testId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `test` */
+
+insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (1,'期中考试','期中考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病');
+
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
 /*Table structure for table `testuser` */
 
 DROP TABLE IF EXISTS `testuser`;
@@ -603,4 +644,7 @@ CREATE TABLE `user` (
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+<<<<<<< HEAD
 >>>>>>> a88316635bfad30e4124c743db3f58697bab070a
+=======
+>>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
