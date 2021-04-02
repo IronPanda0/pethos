@@ -9,13 +9,6 @@ from common.Response import ops_renderErrJSON, ops_renderJSON
 # 蓝图对象，前端页面
 welcome = Blueprint('welcome', __name__)
 
-
-@welcome.route('/home', defaults={'path': ''}, methods=['GET'])
-@welcome.route('/home/<path:path>', methods=['GET'])
-def home_index(path):
-    return render_template('home.html')
-
-
 @welcome.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "GET":

@@ -56,7 +56,6 @@ def listDisease():
 
     return ops_renderJSON(msg="添加成功")
 
-
 # 根据分类名称返回所有疾病
 @disease.route("/search", methods=['POST'])
 def searchDisease():

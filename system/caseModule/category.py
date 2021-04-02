@@ -8,10 +8,6 @@ from common.Response import ops_renderErrJSON, ops_renderJSON
 
 category = Blueprint('categoryModule', __name__, url_prefix='/category')
 
-@category.route("/test", methods=['GET'])
-def test():
-    return jsonify('Hello World')
-
 @category.route("/add", methods=['GET', 'POST'])
 def addCategory():
     # html文件修改为新建题目的文件
@@ -53,10 +49,3 @@ def searchCategory():
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有分类")
 
-
-@category.route("/upgrade", methods=['POST'])
-def upgradeCategory():
-    if request.method == 'POST':
-        req = request.values
-        categoryName = req['categoryName']
-        result = Category.query.filter_by()

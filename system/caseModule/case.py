@@ -68,4 +68,3 @@ def searchCase():
             return ops_renderJSON(msg="查询成功", data=data)
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有分类")
-
