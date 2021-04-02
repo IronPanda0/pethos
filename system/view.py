@@ -10,6 +10,15 @@ from common.Response import ops_renderErrJSON, ops_renderJSON
 welcome = Blueprint('welcome', __name__)
 
 
+# <<<<<<< HEAD
+# =======
+# @welcome.route('/home', defaults={'path': ''}, methods=['GET'])
+# @welcome.route('/home/<path:path>', methods=['GET'])
+# def home_index(path):
+#     return render_template('home.html')
+#
+#
+# >>>>>>> a88316635bfad30e4124c743db3f58697bab070a
 @welcome.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "GET":
@@ -168,7 +177,3 @@ def ifandfor():
     context['MARRY'] = {"name": "MARRY", "password": "123456"}
     # 传进去一个字典，引号中的name对应前端变量名
     return render_template("index.html", **context)
-
-
-
-
