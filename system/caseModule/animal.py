@@ -69,7 +69,7 @@ def searchCategory():
         result = db.session.query(Animal).all()
         temp = {}
         data = []
-        if (result != None):
+        if (len(result) != 0):
             for i in result:
                 temp["animalName"] = i.animalName
                 temp["age"] = i.age

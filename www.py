@@ -14,7 +14,7 @@ from common.urlmanager import UrlManager
 toolbar = DebugToolbarExtension(app)
 
 # 蓝图注册
-
+app.register_blueprint
 app.register_blueprint(welcome)
 app.register_blueprint(question)
 app.register_blueprint(case)

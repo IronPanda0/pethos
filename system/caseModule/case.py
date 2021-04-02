@@ -56,7 +56,7 @@ def searchCase():
         result = db.session.query(Case).all()
         temp = {}
         data = []
-        if (result != None):
+        if (len(result) != 0):
             for i in result:
                 temp["caseName"] = i.caseName
                 temp["diseaseName"] = i.diseaseName
@@ -68,3 +68,4 @@ def searchCase():
             return ops_renderJSON(msg="查询成功", data=data)
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有分类")
+

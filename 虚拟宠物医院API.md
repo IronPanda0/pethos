@@ -50,7 +50,7 @@
 }
 ```
 
-### 查询试题
+### 返回全部试题
 
 - 接口URL：`/question/list`
 - 请求方式：`POST`
@@ -179,7 +179,7 @@
 }
 ```
 
-### 查询分类
+### 返回全部分类
 
 - 接口URL：`/category/list`
 - 请求方式：`POST`
@@ -216,11 +216,35 @@
 
 ```json
 {
-    "code": 200,
-    "data": [],
-    "msg": "查询成功"
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前没有分类"
 }
 ```
+
+### 更新病例
+
+- 接口URL：`/category/update`
+- url式：`POST`
+- 参数说明：
+
+| 参数 | 中文 | 是否必须 | 类型 | 备注 | 案例 |
+| :--: | :--: | :------: | :--: | :--: | :--: |
+|  无  |      |          |      |      |      |
+
+- 返回参数（成功）
+
+```json
+实现中
+```
+
+- 返回参数（分类表为空）
+
+```json
+实现中
+```
+
+### 删除病例
 
 ## 病例类
 
@@ -251,7 +275,7 @@
             "diseaseInfo": "怕水",
             "diseaseName": "狂犬病",
             "imageUrl": "testtest",
-            "videoUrl": "test\n"
+            "videoUrl": "test"
         }
     ],
     "msg": "添加成功"
@@ -268,7 +292,7 @@
 }
 ```
 
-### 查询病例
+### 返回全部病例
 
 - 接口URL：`/case/list`
 - 请求方式：`POST`
@@ -290,7 +314,7 @@
             "diseaseInfo": "怕水",
             "diseaseName": "狂犬病",
             "imageUrl": "test",
-            "videoUrl": "test\n"
+            "videoUrl": "test"
         },
         {
             "animalName": "小李",
@@ -298,7 +322,7 @@
             "diseaseInfo": "怕水",
             "diseaseName": "狂犬病",
             "imageUrl": "test",
-            "videoUrl": "test\n"
+            "videoUrl": "test"
         },
         {
             "animalName": "小王",
@@ -306,7 +330,7 @@
             "diseaseInfo": "怕水",
             "diseaseName": "狂犬病",
             "imageUrl": "test",
-            "videoUrl": "test\n"
+            "videoUrl": "test"
         },
         {
             "animalName": "大王",
@@ -314,7 +338,7 @@
             "diseaseInfo": "怕水",
             "diseaseName": "狂犬病",
             "imageUrl": "testtest",
-            "videoUrl": "test\n"
+            "videoUrl": "test"
         }
     ],
     "msg": "查询成功"
@@ -325,23 +349,24 @@
 
 ```json
 {
-    "code": 200,
-    "data": [],
-    "msg": "查询成功"
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前没有病例"
 }
 ```
 
-## 疾病类
+## 病种类
 
-### 添加疾病
+### 添加病种
 
 - 接口URL：`/disease/add`
 - 请求方式：`POST`
 - 参数说明：
 
-|    参数     |   中文   | 是否必须 |  类型  | 备注 | 案例 |
-| :---------: | :------: | :------: | :----: | :--: | :--: |
-| diseaseName | 疾病名称 |    是    | string |      | 肺炎 |
+|     参数     |   中文   | 是否必须 |  类型  | 备注 |  案例   |
+| :----------: | :------: | :------: | :----: | :--: | :-----: |
+| diseaseName  | 疾病名称 |    是    | string |      | 传染111 |
+| categoryName | 分类名称 |    是    | string |      | 传染病  |
 
 - 返回参数（成功）
 
@@ -350,7 +375,8 @@
     "code": 200,
     "data": [
         {
-            "diseaseName": "感染"
+            "categoryName": "传染病",
+            "diseaseName": "传染111"
         }
     ],
     "msg": "添加成功"
@@ -367,7 +393,48 @@
 }
 ```
 
-### 查询疾病
+### 查询病种
+
+- 接口URL：`/disease/search`
+- 请求方式：`POST`
+- 参数说明：
+
+|     参数     |   中文   | 是否必须 |  类型  | 备注 | 案例 |
+| :----------: | :------: | :------: | :----: | :--: | :--: |
+| categoryName | 分类名称 |    是    | string |      |      |
+
+- 返回参数（成功）
+
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "categoryName": "传染病",
+            "diseaseId": 1,
+            "diseaseName": "狂犬病"
+        },
+        {
+            "categoryName": "传染病",
+            "diseaseId": 2,
+            "diseaseName": "肺炎"
+        }
+    ],
+    "msg": "查询成功"
+}
+```
+
+- 返回参数（失败）
+
+```json
+{
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前该分类没有疾病"
+}
+```
+
+### 返回全部病种
 
 - 接口URL：`/disease/list`
 - 请求方式：`POST`
@@ -384,16 +451,19 @@
     "code": 200,
     "data": [
         {
+            "categoryName": "传染病",
             "diseaseId": 1,
             "diseaseName": "狂犬病"
         },
         {
+            "categoryName": "传染病",
             "diseaseId": 2,
             "diseaseName": "肺炎"
         },
         {
+            "categoryName": "皮肤病",
             "diseaseId": 3,
-            "diseaseName": "感染"
+            "diseaseName": "脱毛"
         }
     ],
     "msg": "查询成功"
@@ -404,9 +474,9 @@
 
 ```json
 {
-    "code": 200,
-    "data": [],
-    "msg": "查询成功"
+    "code": -1,
+    "data": {},
+    "msg": "查询失败，目前没有疾病"
 }
 ```
 
@@ -454,7 +524,7 @@
 }
 ```
 
-### 查询宠物
+### 返回全部宠物
 
 - 接口URL：`/disease/list`
 - 请求方式：`POST`
@@ -516,6 +586,6 @@
 {
     "code": -1,
     "data": {},
-    "msg": "相同名字已存在，请再换一个试试"
+    "msg": "查询失败，目前没有宠物"
 }
 ```

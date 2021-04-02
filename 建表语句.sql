@@ -2,8 +2,7 @@
 SQLyog Ultimate v12.09 (64 bit)
 MySQL - 8.0.18 : Database - coursedb
 *********************************************************************
-*/
-
+*/
 
 /*!40101 SET NAMES utf8 */;
 
@@ -29,11 +28,11 @@ CREATE TABLE `animal` (
   `breathe` int(11) DEFAULT NULL COMMENT '呼吸',
   `heartRate` int(11) DEFAULT NULL COMMENT '心率',
   PRIMARY KEY (`animalId`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Data for the table `animal` */
 
-insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,10),(2,'小张',10,10,10,10);
+insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,10),(2,'小张',10,10,10,10),(3,'小赵',10,10,10,10),(4,'小孙',10,10,10,10),(5,'小李',10,10,10,10);
 
 /*Table structure for table `case` */
 
@@ -44,15 +43,13 @@ CREATE TABLE `case` (
   `caseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '病例名称',
   `animalName` varchar(20) DEFAULT NULL COMMENT '宠物名称',
   `diseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '病种名称',
-  `diseaseinfo` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '文字简介',
+  `diseaseInfo` varchar(500) DEFAULT NULL COMMENT '文字简介',
   `videoUrl` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '视频信息',
   `imageUrl` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片信息',
   PRIMARY KEY (`caseId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 /*Data for the table `case` */
-
-insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`diseaseinfo`,`videoUrl`,`imageUrl`) values (1,NULL,'小明\n',NULL,'怕水','test\n','test');
 
 /*Table structure for table `caseconsumable` */
 
@@ -88,11 +85,11 @@ CREATE TABLE `category` (
   `categoryID` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `categoryName` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类名称',
   PRIMARY KEY (`categoryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 /*Data for the table `category` */
 
-insert  into `category`(`categoryID`,`categoryName`) values (1,'分类一');
+insert  into `category`(`categoryID`,`categoryName`) values (19,'分类111');
 
 /*Table structure for table `consumables` */
 
@@ -117,14 +114,12 @@ DROP TABLE IF EXISTS `disease`;
 
 CREATE TABLE `disease` (
   `diseaseId` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '病种ID',
-  `categoryId` int(11) DEFAULT NULL COMMENT '分类ID',
   `diseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '病种名称',
+  `categoryName` varchar(50) NOT NULL COMMENT '分类名称',
   PRIMARY KEY (`diseaseId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 /*Data for the table `disease` */
-
-insert  into `disease`(`diseaseId`,`categoryId`,`diseaseName`) values (1,NULL,'狂犬病');
 
 /*Table structure for table `executes` */
 
@@ -188,7 +183,7 @@ CREATE TABLE `paperquestion` (
 
 /*Data for the table `paperquestion` */
 
-/*Table structure for table `testModule` */
+/*Table structure for table `question` */
 
 DROP TABLE IF EXISTS `question`;
 
@@ -204,11 +199,11 @@ CREATE TABLE `question` (
   `choiceC` varchar(50) DEFAULT NULL COMMENT '选项C',
   `choiceD` varchar(50) DEFAULT NULL COMMENT '选项D',
   PRIMARY KEY (`questionId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
-/*Data for the table `testModule` */
+/*Data for the table `question` */
 
-insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseId`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,1,'狂犬病',5,'选A','选B','选C','选D'),(2,'题目1',1,1,NULL,NULL,NULL,NULL,NULL,NULL),(3,'题干题干',1,NULL,'狂犬病',NULL,'选项','选项','选项','选项');
+insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseId`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,1,'狂犬病',5,'选A','选B','选C','选D'),(2,'题目1',1,1,NULL,NULL,NULL,NULL,NULL,NULL),(3,'题干题干',1,NULL,'狂犬病',NULL,'选项','选项','选项','选项'),(4,'题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(5,'题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(6,'题干题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项');
 
 /*Table structure for table `room` */
 
