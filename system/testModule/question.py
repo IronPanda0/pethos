@@ -57,9 +57,9 @@ def addQuestion():
 
 
 @question.route("/list", methods=['POST'])
-def searchCategory():
+def listQuestion():
     if request.method == 'POST':
-        result = db.session.query(Question).all()
+        result = Question.query.all()
         temp = {}
         data = []
         if (result != None):
@@ -76,3 +76,29 @@ def searchCategory():
             return ops_renderJSON(msg="查询成功", data=data)
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有题目")
+
+# 根据病种名称返回所有试题
+@question.route("/search", methods=['POST'])
+def searchQuestion():
+    if request.method == 'POST':
+        req = request.values
+        diseaseName = req['diseaseName']
+        result = Question.query.filter_by(diseaseName = diseaseName).all()
+        temp = {}
+        data = []
+        if (len(result) != 0):
+            for i in result:
+                temp["questionInfo"] = i.questionInfo
+                temp["answer"] = i.answer
+                temp["choiceA"] = i.choiceA
+                temp["choiceB"] = i.choiceB
+                temp["choiceC"] = i.choiceC
+                temp["choiceD"] = i.choiceD
+                temp["score"] = i.score
+                temp["diseaseName"] = i.diseaseName
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前该病种没有试题")
+
+    return ops_renderJSON(msg="查询成功")

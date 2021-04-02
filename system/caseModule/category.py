@@ -37,7 +37,7 @@ def addCategory():
 @category.route("/list", methods=['POST'])
 def searchCategory():
     if request.method == 'POST':
-        result = db.session.query(Category).all()
+        result = Category.query.all()
         temp = {}
         data = []
         if (len(result) != 0):
@@ -49,3 +49,26 @@ def searchCategory():
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有分类")
 
+@category.route("/update", methods=['POST'])
+def updateCategory():
+    if request.method == 'POST':
+        req = request.values
+        categoryNameOld = req['categoryNameOld']
+        categoryNameNew = req['categoryNameNew']
+        categoryNameD = db.session.query(Category).filter_by(categoryName = categoryNameNew).first()
+        if categoryNameD:
+            return ops_renderErrJSON(msg="分类已经存在，请换一个再试试。")
+        else:
+            categoryNameU = db.session.query(Category).filter_by(categoryName = categoryNameOld).first()
+            if categoryNameU:
+                categoryNameU.categoryName = categoryNameNew
+                db.session.commit()
+                # json化data
+                temp = {}
+                temp["categoryName"] = categoryNameNew
+                data = []
+                data.append(temp)
+                return ops_renderJSON(msg="修改成功", data=data)
+            else:
+                return ops_renderErrJSON(msg="不存在这个分类，无法修改")
+    return "修改成功"

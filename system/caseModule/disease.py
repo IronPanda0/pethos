@@ -75,4 +75,4 @@ def searchDisease():
         else:
             return ops_renderErrJSON(msg="查询失败，目前该分类没有疾病")
 
-    return ops_renderJSON(msg="添加成功")
+    return ops_renderJSON(msg="查询成功")
