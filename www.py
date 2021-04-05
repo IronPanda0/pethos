@@ -4,7 +4,9 @@ from system.view import welcome
 from flask_debugtoolbar import DebugToolbarExtension
 from interceptor.errorHandler import *
 from common.urlmanager import UrlManager
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
+
+from interceptor.Auth import *
 
 # 蓝图注册
 

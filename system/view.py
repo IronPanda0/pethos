@@ -1,8 +1,8 @@
-from flask import Blueprint, request, make_response, render_template, jsonify
+from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
 from sqlalchemy import text
 import json
-from init import db
+from init import db, app
 from model.user import User
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
@@ -16,8 +16,20 @@ def index():
         return render_template("index.html")
     elif request.method == "POST":
         # 以下进行登录逻辑
-        postform = request.form
-    return render_template("index.html", name="index")
+        req = request.values
+        username = req['user_name']
+        password = req['user_password']
+        #         这里应该判断一下用户名和密码的合法性，但是暂时略过
+        #         以下为查询语句，first()表示返回查到符合条件的第一条数据
+        userD = User.query.filter_by(userName=username).first()
+        if not userD:
+            return ops_renderErrJSON(msg="用户名或密码错误-1")
+        if userD.passWord != password:
+            return ops_renderErrJSON(msg="用户名或密码错误-2")
+        res = make_response( ops_renderJSON( msg="登录成功~~" ) )
+        # 这里cookie内容并未加密，之后处理
+        res.set_cookie(app.config['Pethos_cookie'], "%s" % userD.userId, 60 * 60 *24 *120)
+    return res
 
 
 @welcome.route('/login', methods=['POST'])
@@ -37,13 +49,13 @@ def register():
         return render_template("index.html")
     elif request.method == "POST":
         req = request.values
-        username = req['user_name']
-        password = req['user_password']
+        username = req['name']
+        password = req['passsword']
         #         这里应该判断一下用户名和密码的合法性，但是暂时略过
         #         以下为查询语句，first()表示返回查到符合条件的第一条数据
         #         找到第一个同名的用户名
-        usernameD = User.query.filter_by(userName=username).first()
-        if usernameD:
+        userD = User.query.filter_by(userName=username).first()
+        if userD:
             return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
         # 以下为注册语句并写入数据库
         model_user = User()
@@ -53,6 +65,13 @@ def register():
         db.session.commit()
         return ops_renderJSON(msg="注册成功~~")
     return "注册成功"
+
+
+@welcome.route("/logout")
+def logOut():
+    response = make_response( redirect( url_for("index") ) )
+    response.delete_cookie(  app.config['AUTH_COOKIE_NAME'] )
+    return response
 
 
 # 比如： http://127.0.0.1:5000/manager
