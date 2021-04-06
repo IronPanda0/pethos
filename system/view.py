@@ -1,11 +1,8 @@
 from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
-from sqlalchemy import text
-import json
 from init import db, app
 from model.user import User
 from common.Response import ops_renderErrJSON, ops_renderJSON
-
 
 CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
@@ -16,22 +13,6 @@ welcome = Blueprint('welcome', __name__)
 def index():
     # if request.method == "GET":
     return render_template("index.html")
-    # elif request.method == "POST":
-    #     # 以下进行登录逻辑
-    #     req = request.values
-    #     username = req['user_name']
-    #     password = req['user_password']
-    #     #         这里应该判断一下用户名和密码的合法性，但是暂时略过
-    #     #         以下为查询语句，first()表示返回查到符合条件的第一条数据
-    #     userD = User.query.filter_by(userName=username).first()
-    #     if not userD:
-    #         return ops_renderErrJSON(msg="用户名或密码错误-1")
-    #     if userD.passWord != password:
-    #         return ops_renderErrJSON(msg="用户名或密码错误-2")
-    #     res = make_response( ops_renderJSON( msg="登录成功~~" ) )
-    #     # 这里cookie内容并未加密，之后处理
-    #     res.set_cookie(app.config['Pethos_cookie'], "%s" % userD.userId, 60 * 60 *24 *120)
-    # return res
 
 
 @welcome.route('/login', methods=['POST'])
@@ -44,51 +25,57 @@ def loginConfirm():
     req = request.values
     username = req['login_form[username]']
     password = req['login_form[password]']
-    #         这里应该判断一下用户名和密码的合法性，但是暂时略过
-    #         以下为查询语句，first()表示返回查到符合条件的第一条数据
+    # 判断用户名和密码合法性
+    if username is None or len(username) < 1:
+        return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
+    if password is None or len(password) < 6:
+        return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+    # 以下为查询语句，first()表示返回查到符合条件的第一条数据
     userD = User.query.filter_by(userName=username).first()
     if not userD:
         return ops_renderErrJSON(msg="用户名或密码错误-1")
     if userD.passWord != password:
         return ops_renderErrJSON(msg="用户名或密码错误-2")
-    res = make_response( ops_renderJSON( msg="登录成功~~" ) )
-    # 这里cookie内容并未加密，之后处理
-    # res.set_cookie(app.config['Pethos_cookie'], "%s" % userD.userId, 60 * 60 *24 *120)
-    return ops_renderJSON(msg="登录成功~~")
+    # 这里应该返回一个token，并存储这个token，还没写。。。。。。。。。。。。。。。。。。。。
+    res = make_response(ops_renderJSON(msg="登录成功~~"))
+    return res
+
 
 @welcome.route('/register', methods=['GET', 'POST'])
 def register():
     # 注册界面还没拿到，先用index.html代替
-    if request.method == "GET":
-        return render_template("index.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
-        username = req['name']
-        password = req['passsword']
-        #         这里应该判断一下用户名和密码的合法性，但是暂时略过
+        username = req['login_form[username]']
+        password = req['login_form[password]']
+        checkpwd = req['login_form[checkpwd]']
+        if username is None or len(username) < 1:
+            return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
+        if password is None or len(password) < 6:
+            return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+        if password != checkpwd:
+            return ops_renderErrJSON(msg="两次密码不一致，请检查无误再操作~~")
         #         以下为查询语句，first()表示返回查到符合条件的第一条数据
         #         找到第一个同名的用户名
         userD = User.query.filter_by(userName=username).first()
         if userD:
             return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
-
-
-
         # 以下为注册语句并写入数据库
         model_user = User()
         model_user.userName = username
         model_user.passWord = password
+        model_user.mail = req['login_form[email]']
         db.session.add(model_user)
         db.session.commit()
         return ops_renderJSON(msg="注册成功~~")
-    return "注册成功"
+    return ops_renderErrJSON()
 
 
-@welcome.route("/logout")
-def logOut():
-    response = make_response( redirect( url_for("index") ) )
-    response.delete_cookie(  app.config['AUTH_COOKIE_NAME'] )
-    return response
+# 登出前端写，这里做session的处理
+# @welcome.route("/logout")
+# def logout():
+#
+#     return response
 
 
 # 比如： http://127.0.0.1:5000/manager
