@@ -8,14 +8,14 @@ def before_request():
     print(request.path)
     if request.path=="/":
         return
-    app.logger.info("--------before_request--------")
-    user_info = check_login()
-    app.logger.info(user_info)
-    g.current_user = None
-    g.current_user = user_info
-    if not user_info:
-        return "未登录"
-    return
+    # app.logger.info("--------before_request--------")
+    # user_info = check_login()
+    # app.logger.info(user_info)
+    # g.current_user = None
+    # g.current_user = user_info
+    # if not user_info:
+    #     return "未登录"
+    # return
 
     # 返回Index，因为没有登录，这里还没写
 

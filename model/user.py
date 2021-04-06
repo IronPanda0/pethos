@@ -10,7 +10,8 @@ class User( db.Model ):
     userName = db.Column( db.String( 12 ) )
     passWord = db.Column(db.String(18))
 
+
 # UserP继承的是User类，那么UserP也会去查询数据库中的"user"表
 # 所以UserP会查出Id、Username和Password
-# class UserP (User):
-#     passWord = db.Column(db.String(18))
+class UserP (User):
+    authority = db.Column(db.String(18))

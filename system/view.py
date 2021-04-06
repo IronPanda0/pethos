@@ -6,41 +6,55 @@ from init import db, app
 from model.user import User
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
+
+CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
 welcome = Blueprint('welcome', __name__)
 
 
 @welcome.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == "GET":
-        return render_template("index.html")
-    elif request.method == "POST":
-        # 以下进行登录逻辑
-        req = request.values
-        username = req['user_name']
-        password = req['user_password']
-        #         这里应该判断一下用户名和密码的合法性，但是暂时略过
-        #         以下为查询语句，first()表示返回查到符合条件的第一条数据
-        userD = User.query.filter_by(userName=username).first()
-        if not userD:
-            return ops_renderErrJSON(msg="用户名或密码错误-1")
-        if userD.passWord != password:
-            return ops_renderErrJSON(msg="用户名或密码错误-2")
-        res = make_response( ops_renderJSON( msg="登录成功~~" ) )
-        # 这里cookie内容并未加密，之后处理
-        res.set_cookie(app.config['Pethos_cookie'], "%s" % userD.userId, 60 * 60 *24 *120)
-    return res
+    # if request.method == "GET":
+    return render_template("index.html")
+    # elif request.method == "POST":
+    #     # 以下进行登录逻辑
+    #     req = request.values
+    #     username = req['user_name']
+    #     password = req['user_password']
+    #     #         这里应该判断一下用户名和密码的合法性，但是暂时略过
+    #     #         以下为查询语句，first()表示返回查到符合条件的第一条数据
+    #     userD = User.query.filter_by(userName=username).first()
+    #     if not userD:
+    #         return ops_renderErrJSON(msg="用户名或密码错误-1")
+    #     if userD.passWord != password:
+    #         return ops_renderErrJSON(msg="用户名或密码错误-2")
+    #     res = make_response( ops_renderJSON( msg="登录成功~~" ) )
+    #     # 这里cookie内容并未加密，之后处理
+    #     res.set_cookie(app.config['Pethos_cookie'], "%s" % userD.userId, 60 * 60 *24 *120)
+    # return res
 
 
 @welcome.route('/login', methods=['POST'])
 def loginConfirm():
     # 如果前端传回来Bytes，用以下方法转成json
-    data = str(request.data, 'utf-8')
-    form = json.loads(data)
-
-    print(form)
-    return "xxx"
-
+    # data = str(request.form, 'utf-8')
+    form = request.form
+    print(form["login_form[username]"])
+    # 以下进行登录逻辑
+    req = request.values
+    username = req['login_form[username]']
+    password = req['login_form[password]']
+    #         这里应该判断一下用户名和密码的合法性，但是暂时略过
+    #         以下为查询语句，first()表示返回查到符合条件的第一条数据
+    userD = User.query.filter_by(userName=username).first()
+    if not userD:
+        return ops_renderErrJSON(msg="用户名或密码错误-1")
+    if userD.passWord != password:
+        return ops_renderErrJSON(msg="用户名或密码错误-2")
+    res = make_response( ops_renderJSON( msg="登录成功~~" ) )
+    # 这里cookie内容并未加密，之后处理
+    # res.set_cookie(app.config['Pethos_cookie'], "%s" % userD.userId, 60 * 60 *24 *120)
+    return ops_renderJSON(msg="登录成功~~")
 
 @welcome.route('/register', methods=['GET', 'POST'])
 def register():
@@ -57,6 +71,9 @@ def register():
         userD = User.query.filter_by(userName=username).first()
         if userD:
             return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
+
+
+
         # 以下为注册语句并写入数据库
         model_user = User()
         model_user.userName = username
