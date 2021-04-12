@@ -10,12 +10,18 @@ from system.costModule.executes import executes
 from system.costModule.consumables import consumables
 from system.testModule.test import test
 from flask_debugtoolbar import DebugToolbarExtension
+from system.instance.view import instance
+# from flask_debugtoolbar import DebugToolbarExtension
 from interceptor.errorHandler import *
 from common.urlmanager import UrlManager
 toolbar = DebugToolbarExtension(app)
 
 # 蓝图注册
 app.register_blueprint(welcome)
+app.register_blueprint(instance)
+app.add_template_global(UrlManager.buildStaticUrl, 'buildStaticUrl')
+app.add_template_global(UrlManager.buildUrl, 'buildUrl')
+
 app.register_blueprint(question)
 app.register_blueprint(case)
 app.register_blueprint(animal)

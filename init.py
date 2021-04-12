@@ -4,18 +4,10 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__,
-            static_folder="./templates/dist/static",
-            template_folder="./templates/dist",
+            static_folder="./templates/static",
+            template_folder="./templates",
             )
-# cors = CORS(app, resources={"/api/*": {"origins": "*"}})
-
 # 此文件仅用于初始化配置
-
-# qaq
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# def catch_all(path):
-#     return render_template("index.html")
 
 # 各种变量的配置文件，默认加载base_setting
 app.config.from_pyfile("config/base_setting.py")
