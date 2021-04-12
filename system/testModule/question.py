@@ -62,7 +62,7 @@ def listQuestion():
         result = Question.query.all()
         temp = {}
         data = []
-        if (result != None):
+        if (len(result) != 0):
             for i in result:
                 temp["questionInfo"] = i.questionInfo
                 temp["answer"] = i.answer

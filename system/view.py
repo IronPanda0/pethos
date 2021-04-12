@@ -12,7 +12,7 @@ welcome = Blueprint('welcome', __name__)
 @welcome.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("templates/index.html")
     elif request.method == "POST":
         # 以下进行登录逻辑
         postform = request.form
@@ -33,7 +33,7 @@ def loginConfirm():
 def register():
     # 注册界面还没拿到，先用index.html代替
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("templates/index.html")
     elif request.method == "POST":
         req = request.values
         username = req['user_name']
