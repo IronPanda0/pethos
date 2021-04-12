@@ -15,3 +15,6 @@ CORS(app)
 
 # 创建数据库通讯对象
 db = SQLAlchemy( app )
+
+# token表，用于保存用户登录态
+sessionList=[]

@@ -5,15 +5,7 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <orderEntry type="jdk" jdkName="Python 3.8 (pethos-lyb)" jdkType="Python SDK" />
-=======
-    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
->>>>>>> a88316635bfad30e4124c743db3f58697bab070a
-=======
-    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
->>>>>>> 714c4ca1bc542f77d0daf51e06ce8b29486d32af
+    <orderEntry type="jdk" jdkName="Pipenv (pethos)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
