@@ -9,5 +9,6 @@ def getCurrentTime(frm="%Y-%m-%d %H:%M:%S"):
 
 def tokenGen(user):
     t = TJSS(app.config["SECRET_KEY"],expires_in=3600)
-    t.dumps(user)
-    return
+    token = t.dumps(user)
+    token.decode()
+    return token
