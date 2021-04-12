@@ -8,7 +8,6 @@ CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
 welcome = Blueprint('welcome', __name__)
 
-
 @welcome.route('/', methods=['GET', 'POST'])
 def index():
     # if request.method == "GET":
