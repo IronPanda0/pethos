@@ -8,7 +8,6 @@ CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
 instance = Blueprint('instance', __name__, url_prefix="/Case")
 
-
 @instance.route("/info", methods = ['GET','POST'])
 def getinfo():
     req = request.values

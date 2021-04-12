@@ -18,13 +18,11 @@ def index():
 @welcome.route('/login', methods=['POST'])
 def loginConfirm():
     # 如果前端传回来Bytes，用以下方法转成json
-    # data = str(request.form, 'utf-8')
-    form = request.form
-    print(form["login_form[username]"])
     # 以下进行登录逻辑
     req = request.values
-    username = req['login_form[username]']
-    password = req['login_form[password]']
+    username = req['username']
+    password = req['password']
+    print(username)
     # 判断用户名和密码合法性
     if username is None or len(username) < 1:
         return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
@@ -46,9 +44,9 @@ def register():
     # 注册界面还没拿到，先用index.html代替
     if request.method == "POST":
         req = request.values
-        username = req['login_form[username]']
-        password = req['login_form[password]']
-        checkpwd = req['login_form[checkpwd]']
+        username = req['username']
+        password = req['password']
+        checkpwd = req['checkpwd']
         if username is None or len(username) < 1:
             return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
         if password is None or len(password) < 6:
@@ -60,15 +58,20 @@ def register():
         userD = User.query.filter_by(userName=username).first()
         if userD:
             return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
-        # 以下为注册语句并写入数据库
+        # 创建一个用户实例
         model_user = User()
         model_user.userName = username
         model_user.passWord = password
-        model_user.mail = req['login_form[email]']
+        model_user.mail = req['email']
+        # 默认权限为2，即实习生
+        model_user.authority = 2
+
+        # 将实例写入数据库
         db.session.add(model_user)
         db.session.commit()
         return ops_renderJSON(msg="注册成功~~")
     return ops_renderErrJSON()
+
 
 
 # 登出前端写，这里做session的处理

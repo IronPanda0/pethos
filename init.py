@@ -8,7 +8,6 @@ app = Flask(__name__,
             )
 # 此文件仅用于初始化配置
 
-
 # 各种变量的配置文件，默认加载base_setting
 app.config.from_pyfile("config/base_setting.py")
 
