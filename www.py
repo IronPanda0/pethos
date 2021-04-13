@@ -11,13 +11,13 @@ from system.costModule.consumables import consumables
 from system.testModule.test import test
 from system.testModule.paper import paper
 from system.userRole import userRole
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from system.instance.view import instance
 # from flask_debugtoolbar import DebugToolbarExtension
 from interceptor.errorHandler import *
 from common.urlmanager import UrlManager
 
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 app.config['JSON_AS_ASCII'] = False
 # 蓝图注册

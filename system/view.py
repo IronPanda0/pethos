@@ -1,10 +1,9 @@
 from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
-
-from common.DataHelper import tokenGen
-from init import db, app, sessionList
+from common.DataHelper import tokenGen, storeInRedis, getFromRedis
+from init import db, app
 from model.user import User
-from common.Response import ops_renderErrJSON, ops_renderJSON
+from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
 
 CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
@@ -24,7 +23,6 @@ def index():
 
 @welcome.route('/login', methods=['POST'])
 def loginConfirm():
-    # 如果前端传回来Bytes，用以下方法转成json
     # 以下进行登录逻辑
     req = request.values
     username = req['username']
@@ -41,6 +39,8 @@ def loginConfirm():
         return ops_renderErrJSON(msg="用户名或密码错误-1")
     if userD.passWord != password:
         return ops_renderErrJSON(msg="用户名或密码错误-2")
+    if userD.authority != 2:
+        return ops_renderErrJSON(msg="用户名或密码错误-1")
     # user用来生成token
     user = {
         "userId": userD.userId,
@@ -48,10 +48,14 @@ def loginConfirm():
         "auth": userD.authority
     }
     token = tokenGen(user)
-    # 服务器保存token
-    sessionList.append(token)
-    # 返回给前端的token值，需要前端保存，每次请求数据都要
+    # 调用redis服务器保存token
+    storeInRedis(userD.userId, token, expire=3600*24*7)
+    # 返回给前端的token值，需要前端保存，每次请求数据都要检查
     res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
+
+    # 这里拿到redis里根据用户Id存的token，并且一周后自动清除token
+    # 尝试获取redis里的值
+    print(getFromRedis(userD.userId))
     return res
 
 
@@ -105,6 +109,8 @@ def mLogin():
         return ops_renderErrJSON(msg="用户名或密码错误-1")
     if userD.passWord != password:
         return ops_renderErrJSON(msg="用户名或密码错误-2")
+    if userD.authority != 1:
+        return ops_renderIllegalJSON()
     # user用来生成token
     user = {
         "userId": userD.userId,
@@ -112,7 +118,7 @@ def mLogin():
         "auth": userD.authority
     }
     token = tokenGen(user)
-    # 服务器保存token
+    # 调用redis服务器保存token
     sessionList.append(token)
     # 返回给前端的token值，需要前端保存，每次请求数据都要传给后端
     res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
@@ -141,7 +147,6 @@ def mRegister():
         model_user = User()
         model_user.userName = username
         model_user.passWord = password
-        model_user.mail = req['email']
         # 默认权限为1，即管理员
         model_user.authority = 1
         # 将实例写入数据库
@@ -152,10 +157,11 @@ def mRegister():
 
 
 # 登出前端写，这里做session的处理
-# @welcome.route("/logout")
-# def logout():
-#
-#     return response
+@welcome.route("/logout")
+def logout():
+    token = request.values["token"]
+    sessionList.remove(token)
+    return ops_renderJSON(msg="用户已登出!")
 
 
 # 比如： http://127.0.0.1:5000/manager

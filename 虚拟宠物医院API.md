@@ -7,7 +7,7 @@
 |   username  |   用户名  |    是    | string |      |
 |   password  |   密码    |    是    | string |      |
 
-- 接口URL：`/mregister`
+- 接口URL：`/mlogin`
 - 请求方式：`POST`
 - 参数说明：
 

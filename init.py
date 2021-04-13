@@ -2,6 +2,7 @@ from flask import Flask, Blueprint, render_template
 from flask_login import LoginManager
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_redis import FlaskRedis
 
 app = Flask(__name__,
             static_folder="./templates/static",
@@ -16,5 +17,6 @@ CORS(app)
 # 创建数据库通讯对象
 db = SQLAlchemy( app )
 
-# token表，用于保存用户登录态
-sessionList=[]
+# 这里的redis用来存放token
+redis_client = FlaskRedis()
+redis_client.init_app(app)
