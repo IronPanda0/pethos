@@ -45,35 +45,27 @@ def addTest():
         return ops_renderJSON(msg = "添加成功",data = data)
     return "添加成功"
 
+# 根据病种名称返回分页所有考试
 @test.route("/list", methods=['POST'])
 def listTest():
     if request.method == 'POST':
-        result = Test.query.all()
-        temp = {}
-        data = []
-        if (len(result) != 0):
-            for i in result:
-                temp["testName"] = i.testName
-                temp["paperName"] = i.paperName
-                temp["beginTime"] = i.beginTime
-                temp["endTime"] = i.endTime
-                temp["diseaseName"] = i.diseaseName
-                data.append(temp.copy())
-            return ops_renderJSON(msg="查询成功", data=data)
+        res = request.values
+        page = int(res['page'])
+        per_page = int(res['per_page'])
+        diseaseName = res['diseaseName']
+        if (page == None):
+            page = 1
+        if (per_page == None):
+            per_page = 10
+        if (len(diseaseName) == 0):
+            result = Test.query.limit(per_page).offset((page - 1) * per_page)
         else:
-            return ops_renderErrJSON(msg="查询失败，目前没有考试")
-
-# 根据病种名称返回所有考试
-@test.route("/search", methods=['POST'])
-def searchTest():
-    if request.method == 'POST':
-        req = request.values
-        testName = req['testName']
-        result = Test.query.filter_by(testName = testName).all()
+            result = Test.query.filter_by(diseaseName=diseaseName).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
-        if (len(result) != 0):
+        if (result != None):
             for i in result:
+                temp["testId"] = i.testId
                 temp["testName"] = i.testName
                 temp["paperName"] = i.paperName
                 temp["beginTime"] = i.beginTime
@@ -85,3 +77,34 @@ def searchTest():
             return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
 
     return ops_renderJSON(msg="查询成功")
+
+
+# 根据考试名称查询考试
+@test.route("/search", methods=['POST'])
+def searchTest():
+    if request.method == 'POST':
+        res = request.values
+        page = int(res['page'])
+        per_page = int(res['per_page'])
+        testName = res['testName']
+        if (page == None):
+            page = 1
+        if (per_page == None):
+            per_page = 10
+        if (len(testName) != 0):
+            result = Test.query.filter_by(testName=testName).limit(per_page).offset((page - 1) * per_page)
+            temp = {}
+            data = []
+            if (result != None):
+                for i in result:
+                    temp["testId"] = i.testId
+                    temp["testName"] = i.testName
+                    temp["paperName"] = i.paperName
+                    temp["beginTime"] = i.beginTime
+                    temp["endTime"] = i.endTime
+                    temp["diseaseName"] = i.diseaseName
+                    data.append(temp.copy())
+                return ops_renderJSON(msg="查询成功", data=data)
+            else:
+                return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
+        return ops_renderJSON(msg="查询成功")

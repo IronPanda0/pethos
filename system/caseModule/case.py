@@ -53,7 +53,15 @@ def addCase():
 @case.route("/list", methods=['POST'])
 def searchCase():
     if request.method == 'POST':
-        result = db.session.query(Case).all()
+        res = request.values
+        page = int(res['page'])
+        per_page = int(res['per_page'])
+        categoryName = res['categoryName']
+        if (page == None):
+            page = 1
+        if (per_page == None):
+            per_page = 10
+        result = db.session.query(Case).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
         if (len(result) != 0):
