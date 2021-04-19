@@ -36,3 +36,9 @@ def getFromRedis(itemId=0):
     if data:
         return data.decode()
     return None
+
+
+def removeFromRedis(itemId=0):
+    user_id = str(itemId).encode('utf-8')
+    data_key = "dyn_data/%s" % user_id
+    redis_client.delete(data_key)

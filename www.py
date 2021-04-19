@@ -11,6 +11,7 @@ from system.costModule.consumables import consumables
 from system.testModule.test import test
 from system.testModule.paper import paper
 from system.userRole import userRole
+from system.manager.managerCon import manager
 # from flask_debugtoolbar import DebugToolbarExtension
 from system.instance.view import instance
 # from flask_debugtoolbar import DebugToolbarExtension
@@ -23,6 +24,7 @@ app.config['JSON_AS_ASCII'] = False
 # 蓝图注册
 app.register_blueprint(welcome)
 app.register_blueprint(instance)
+app.register_blueprint(manager)
 app.add_template_global(UrlManager.buildStaticUrl, 'buildStaticUrl')
 app.add_template_global(UrlManager.buildUrl, 'buildUrl')
 
