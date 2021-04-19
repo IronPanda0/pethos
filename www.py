@@ -11,6 +11,8 @@ from system.costModule.consumables import consumables
 from system.testModule.test import test
 from system.testModule.paper import paper
 from system.userRole import userRole
+from system.roomModule.room import room
+from system.roomModule.medicine import medicine
 # from flask_debugtoolbar import DebugToolbarExtension
 from system.instance.view import instance
 # from flask_debugtoolbar import DebugToolbarExtension
@@ -36,5 +38,8 @@ app.register_blueprint(consumables)
 app.register_blueprint(test)
 app.register_blueprint(paper)
 app.register_blueprint(userRole)
+app.register_blueprint(room)
+app.register_blueprint(medicine)
+
 app.add_template_global(UrlManager.buildStaticUrl, 'buildStaticUrl')
 app.add_template_global(UrlManager.buildUrl, 'buildUrl')

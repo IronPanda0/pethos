@@ -60,7 +60,7 @@ def updateCategory():
             return ops_renderErrJSON(msg="分类已经存在，请换一个再试试。")
         else:
             categoryNameU = db.session.query(Category).filter_by(categoryName = categoryNameOld).first()
-            if categoryNameU:
+            if categoryNameU != None:
                 categoryNameU.categoryName = categoryNameNew
                 db.session.commit()
                 # json化data

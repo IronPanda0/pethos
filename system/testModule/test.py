@@ -108,3 +108,33 @@ def searchTest():
             else:
                 return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
         return ops_renderJSON(msg="查询成功")
+
+
+# 根据testName删除考试
+@test.route("/delete", methods=['POST'])
+def deleteTest():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        testName = res['testName']
+        testNameD = db.session.query(Test).filter(Test.testName == testName).first()
+        if testNameD == None:
+            return ops_renderErrJSON(msg="目前没有该考试，请再次确认")
+        testName = testNameD.testName
+        paperName = testNameD.paperName
+        beginTime = testNameD.beginTime
+        endTime = testNameD.endTime
+        diseaseName = testNameD.diseaseName
+        temp = {}
+        temp["testName"] = testName
+        temp["paperName"] = paperName
+        temp["beginTime"] = beginTime
+        temp["endTime"] = endTime
+        temp["diseaseName"] = diseaseName
+        data = []
+        data.append(temp)
+
+        db.session.delete(testNameD)
+        db.session.commit()
+
+        return ops_renderJSON(msg="删除成功", data=data)
