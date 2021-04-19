@@ -59,11 +59,23 @@ def addQuestion():
 @question.route("/list", methods=['POST'])
 def listQuestion():
     if request.method == 'POST':
-        result = Question.query.all()
+        res = request.values
+        page = int(res['page'])
+        per_page = int(res['per_page'])
+        diseaseName = res['diseaseName']
+        if (page == None):
+            page = 1
+        if (per_page == None):
+            per_page = 10
+        if (len(diseaseName) == 0):
+            result = Question.query.limit(per_page).offset((page - 1) * per_page)
+        else:
+            result = Question.query.filter_by(diseaseName=diseaseName).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
         if (result != None):
             for i in result:
+                temp["questionId"] = i.questionId
                 temp["questionInfo"] = i.questionInfo
                 temp["answer"] = i.answer
                 temp["choiceA"] = i.choiceA
@@ -77,28 +89,47 @@ def listQuestion():
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有题目")
 
-# 根据病种名称返回所有试题
-@question.route("/search", methods=['POST'])
-def searchQuestion():
-    if request.method == 'POST':
-        req = request.values
-        diseaseName = req['diseaseName']
-        result = Question.query.filter_by(diseaseName = diseaseName).all()
-        temp = {}
-        data = []
-        if (len(result) != 0):
-            for i in result:
-                temp["questionInfo"] = i.questionInfo
-                temp["answer"] = i.answer
-                temp["choiceA"] = i.choiceA
-                temp["choiceB"] = i.choiceB
-                temp["choiceC"] = i.choiceC
-                temp["choiceD"] = i.choiceD
-                temp["score"] = i.score
-                temp["diseaseName"] = i.diseaseName
-                data.append(temp.copy())
-            return ops_renderJSON(msg="查询成功", data=data)
-        else:
-            return ops_renderErrJSON(msg="查询失败，目前该病种没有试题")
+    #     result = Question.query.all()
 
-    return ops_renderJSON(msg="查询成功")
+
+@question.route("/delete", methods=['POST'])
+def deleteQuestion():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        questionId = res['questionId']
+        # diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
+        questionD = db.session.query(Question).filter(questionId=questionId).first()
+        if questionD == None:
+            return ops_renderErrJSON(msg="目前没有该题目，请重新确认")
+
+        db.session.delete(questionD)
+        db.session.commit()
+
+        return ops_renderJSON(msg="删除成功")
+
+# # 根据病种名称返回所有试题
+# @question.route("/search", methods=['POST'])
+# def searchQuestion():
+#     if request.method == 'POST':
+#         req = request.values
+#         diseaseName = req['diseaseName']
+#         result = Question.query.filter_by(diseaseName = diseaseName).all()
+#         temp = {}
+#         data = []
+#         if (len(result) != 0):
+#             for i in result:
+#                 temp["questionInfo"] = i.questionInfo
+#                 temp["answer"] = i.answer
+#                 temp["choiceA"] = i.choiceA
+#                 temp["choiceB"] = i.choiceB
+#                 temp["choiceC"] = i.choiceC
+#                 temp["choiceD"] = i.choiceD
+#                 temp["score"] = i.score
+#                 temp["diseaseName"] = i.diseaseName
+#                 data.append(temp.copy())
+#             return ops_renderJSON(msg="查询成功", data=data)
+#         else:
+#             return ops_renderErrJSON(msg="查询失败，目前该病种没有试题")
+#
+#     return ops_renderJSON(msg="查询成功")

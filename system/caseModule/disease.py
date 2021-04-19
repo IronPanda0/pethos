@@ -2,15 +2,14 @@ from flask import Blueprint, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from sqlalchemy import text
 import json
-from init import db
-from model.disease import Disease
 from common.Response import ops_renderErrJSON, ops_renderJSON
-
+from model.disease import Disease
 disease = Blueprint('diseaseModule', __name__, url_prefix='/disease')
 
 
 @disease.route("/add", methods=['GET', 'POST'])
 def addDisease():
+    from init import db
     # html文件修改为新建题目的文件
     if request.method == "GET":
         return render_template("提交疾病.html")
@@ -38,34 +37,25 @@ def addDisease():
     return "添加成功"
 
 
+# 根据分类名称返回疾病
 @disease.route("/list", methods=['POST'])
-def listDisease():
-    if request.method == 'POST':
-        result = db.session.query(Disease).all()
-        temp = {}
-        data = []
-        if (len(result) != 0):
-            for i in result:
-                temp["diseaseId"] = i.diseaseId
-                temp["diseaseName"] = i.diseaseName
-                temp["categoryName"] = i.categoryName
-                data.append(temp.copy())
-            return ops_renderJSON(msg="查询成功", data=data)
-        else:
-            return ops_renderErrJSON(msg="查询失败，目前没有疾病")
-
-    return ops_renderJSON(msg="添加成功")
-
-# 根据分类名称返回所有疾病
-@disease.route("/search", methods=['POST'])
 def searchDisease():
     if request.method == 'POST':
-        req = request.values
-        categoryName = req['categoryName']
-        result = Disease.query.filter_by(categoryName=categoryName).all()
+        res = request.values
+        categoryName = res['categoryName']
+        page = int(res['page'])
+        per_page = int(res['per_page'])
+        if (page == None):
+            page = 1
+        if (per_page == None):
+            per_page = 10
+        if (categoryName == None):
+            result = Disease.query.limit(per_page).offset((page - 1) * per_page)
+        else:
+            result = Disease.query.filter_by(categoryName=categoryName).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
-        if (len(result) != 0):
+        if (result != None):
             for i in result:
                 temp["diseaseId"] = i.diseaseId
                 temp["diseaseName"] = i.diseaseName
@@ -76,3 +66,26 @@ def searchDisease():
             return ops_renderErrJSON(msg="查询失败，目前该分类没有疾病")
 
     return ops_renderJSON(msg="查询成功")
+
+
+# 根据diseaeName删除病种
+@disease.route("/delete", methods=['POST'])
+def deleteDisease():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        diseaseName = res['diseaseName']
+        diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
+        if diseaseNameD == None:
+            return ops_renderErrJSON(msg="目前没有该病种，请再次确认")
+        categoryName = diseaseNameD.categoryName
+        temp = {}
+        temp["diseaseName"] = diseaseName
+        temp["categoryName"] = categoryName
+        data = []
+        data.append(temp)
+
+        db.session.delete(diseaseNameD)
+        db.session.commit()
+
+        return ops_renderJSON(msg="删除成功", data=data)
