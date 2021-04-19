@@ -187,7 +187,7 @@ CREATE TABLE `paper` (
 
 /*Data for the table `paper` */
 
-insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseId`,`diseaseName`) values (1,'期中考试',10,2,1,'狂犬病'),(8,'考试1',95,NULL,NULL,'狂犬病');
+insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseId`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,1,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,NULL,'狂犬病');
 
 /*Table structure for table `paperquestion` */
 
@@ -284,7 +284,22 @@ CREATE TABLE `test` (
 
 /*Data for the table `test` */
 
-insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (2,'期末考试','期末中考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病'),(3,'入学考试','入学中考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病');
+insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (1,'期末考试','期末考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病'),(2,'入学考试','入学考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病');
+
+/*Table structure for table `testpaper` */
+
+DROP TABLE IF EXISTS `testpaper`;
+
+CREATE TABLE `testpaper` (
+  `testPaperId` int(11) NOT NULL AUTO_INCREMENT,
+  `testId` int(11) DEFAULT NULL,
+  `paperId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`testPaperId`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Data for the table `testpaper` */
+
+insert  into `testpaper`(`testPaperId`,`testId`,`paperId`) values (1,1,1),(2,2,2);
 
 /*Table structure for table `testuser` */
 
