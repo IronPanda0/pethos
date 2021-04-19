@@ -1,9 +1,10 @@
 from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
-from common.DataHelper import tokenGen, storeInRedis, getFromRedis
+from common.DataHelper import tokenGen, storeInRedis, getFromRedis, removeFromRedis
 from init import db, app
 from model.user import User
 from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
+from common.userAuth import *
 
 CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
@@ -49,9 +50,12 @@ def loginConfirm():
     }
     token = tokenGen(user)
     # 调用redis服务器保存token
-    storeInRedis(userD.userId, token, expire=3600*24*7)
+    storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
     # 返回给前端的token值，需要前端保存，每次请求数据都要检查
     res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
+
+    # 这里删除操作成功
+    # removeFromRedis(userD.userId)
 
     # 这里拿到redis里根据用户Id存的token，并且一周后自动清除token
     # 尝试获取redis里的值
@@ -119,7 +123,7 @@ def mLogin():
     }
     token = tokenGen(user)
     # 调用redis服务器保存token
-    sessionList.append(token)
+    storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
     # 返回给前端的token值，需要前端保存，每次请求数据都要传给后端
     res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
     return res
@@ -156,12 +160,25 @@ def mRegister():
     return ops_renderErrJSON()
 
 
-# 登出前端写，这里做session的处理
-@welcome.route("/logout")
+# 登出前端写，这里做token的处理
+@welcome.route("/logout", methods =["POST"])
 def logout():
-    token = request.values["token"]
-    sessionList.remove(token)
-    return ops_renderJSON(msg="用户已登出!")
+    userId = request.values["userId"] if "userId" in request.values else None
+    token = request.values["token"] if "token" in request.values else None
+    data = {
+        "userId": userId,
+        "token": token
+    } if userId and token is not None else None
+    auth = authCheck(data)
+    if not auth:
+        app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
+        return redirect(url_for("welcome.index"))
+    # else后面接权限正常情况下的代码
+    else:
+        removeFromRedis(userId)
+        return ops_renderJSON(msg="用户已登出!")
+
+
 
 
 # 比如： http://127.0.0.1:5000/manager

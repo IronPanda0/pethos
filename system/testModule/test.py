@@ -45,6 +45,7 @@ def addTest():
         return ops_renderJSON(msg = "添加成功",data = data)
     return "添加成功"
 
+
 # 根据病种名称返回分页所有考试
 @test.route("/list", methods=['POST'])
 def listTest():
@@ -52,7 +53,7 @@ def listTest():
         res = request.values
         page = int(res['page'])
         per_page = int(res['per_page'])
-        diseaseName = res['diseaseName']
+        diseaseName = res['diseaseName[0]']
         if (page == None):
             page = 1
         if (per_page == None):
