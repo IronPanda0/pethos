@@ -1,57 +1,184 @@
-from flask import Blueprint, request, make_response, render_template, jsonify
+from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
-from sqlalchemy import text
-import json
-from init import db
+from common.DataHelper import tokenGen, storeInRedis, getFromRedis, removeFromRedis
+from init import db, app
 from model.user import User
-from common.Response import ops_renderErrJSON, ops_renderJSON
+from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
+from common.userAuth import *
 
+CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
 welcome = Blueprint('welcome', __name__)
 
+
 @welcome.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == "GET":
-        return render_template("index.html")
-    elif request.method == "POST":
-        # 以下进行登录逻辑
-        postform = request.form
-    return render_template("index.html", name="index")
+    if request.values.has_key('entrance'):
+        if request.method == "GET":
+            if request.values['entrance'] == "user":
+                return render_template("index_f.html")
+            elif request.values['entrance'] == "manager":
+                return render_template("index_b.html")
+    return render_template('index.html')
 
 
 @welcome.route('/login', methods=['POST'])
 def loginConfirm():
-    # 如果前端传回来Bytes，用以下方法转成json
-    data = str(request.data, 'utf-8')
-    form = json.loads(data)
+    # 以下进行登录逻辑
+    req = request.values
+    username = req['username']
+    password = req['password']
+    print(username)
+    # 判断用户名和密码合法性
+    if username is None or len(username) < 1:
+        return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
+    if password is None or len(password) < 6:
+        return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+    # 以下为查询语句，first()表示返回查到符合条件的第一条数据
+    userD = User.query.filter_by(userName=username).first()
+    if not userD:
+        return ops_renderErrJSON(msg="用户名或密码错误-1")
+    if userD.passWord != password:
+        return ops_renderErrJSON(msg="用户名或密码错误-2")
+    if userD.authority != 2:
+        return ops_renderErrJSON(msg="用户名或密码错误-1")
+    # user用来生成token
+    user = {
+        "userId": userD.userId,
+        "username": userD.userName,
+        "auth": userD.authority
+    }
+    token = tokenGen(user)
+    # 调用redis服务器保存token
+    storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
+    # 返回给前端的token值，需要前端保存，每次请求数据都要检查
+    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
 
-    print(form)
-    return "xxx"
+    # 这里删除操作成功
+    # removeFromRedis(userD.userId)
+
+    # 这里拿到redis里根据用户Id存的token，并且一周后自动清除token
+    # 尝试获取redis里的值
+    print(getFromRedis(userD.userId))
+    return res
 
 
 @welcome.route('/register', methods=['GET', 'POST'])
 def register():
-    # 注册界面还没拿到，先用index.html代替
-    if request.method == "GET":
-        return render_template("index.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
-        username = req['user_name']
-        password = req['user_password']
-        #         这里应该判断一下用户名和密码的合法性，但是暂时略过
+        username = req['username']
+        password = req['password']
+        checkpwd = req['checkpwd']
+        if username is None or len(username) < 1:
+            return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
+        if password is None or len(password) < 6:
+            return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+        if password != checkpwd:
+            return ops_renderErrJSON(msg="两次密码不一致，请检查无误再操作~~")
         #         以下为查询语句，first()表示返回查到符合条件的第一条数据
         #         找到第一个同名的用户名
-        usernameD = User.query.filter_by(userName=username).first()
-        if usernameD:
+        userD = User.query.filter_by(userName=username).first()
+        if userD:
             return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
-        # 以下为注册语句并写入数据库
+        # 创建一个用户实例
         model_user = User()
         model_user.userName = username
         model_user.passWord = password
+        model_user.mail = req['email']
+        # 默认权限为2，即实习生
+        model_user.authority = 2
+
+        # 将实例写入数据库
         db.session.add(model_user)
         db.session.commit()
         return ops_renderJSON(msg="注册成功~~")
-    return "注册成功"
+    return ops_renderErrJSON()
+
+
+@welcome.route("/mlogin", methods=["POST"])
+def mLogin():
+    req = request.values
+    username = req['username']
+    password = req['password']
+    print(username)
+    # 判断用户名和密码合法性
+    if username is None or len(username) < 1:
+        return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
+    if password is None or len(password) < 6:
+        return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+    # 以下为查询语句，first()表示返回查到符合条件的第一条数据
+    userD = User.query.filter_by(userName=username).first()
+    if not userD:
+        return ops_renderErrJSON(msg="用户名或密码错误-1")
+    if userD.passWord != password:
+        return ops_renderErrJSON(msg="用户名或密码错误-2")
+    if userD.authority != 1:
+        return ops_renderIllegalJSON()
+    # user用来生成token
+    user = {
+        "userId": userD.userId,
+        "username": userD.userName,
+        "auth": userD.authority
+    }
+    token = tokenGen(user)
+    # 调用redis服务器保存token
+    storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
+    # 返回给前端的token值，需要前端保存，每次请求数据都要传给后端
+    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
+    return res
+
+
+@welcome.route("/mregister", methods=["POST"])
+def mRegister():
+    if request.method == "POST":
+        req = request.values
+        username = req['username']
+        password = req['password']
+        checkpwd = req['checkpwd']
+        if username is None or len(username) < 1:
+            return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
+        if password is None or len(password) < 6:
+            return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+        if password != checkpwd:
+            return ops_renderErrJSON(msg="两次密码不一致，请检查无误再操作~~")
+        #         以下为查询语句，first()表示返回查到符合条件的第一条数据
+        #         找到第一个同名的用户名
+        userD = User.query.filter_by(userName=username).first()
+        if userD:
+            return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
+        # 创建一个用户实例
+        model_user = User()
+        model_user.userName = username
+        model_user.passWord = password
+        # 默认权限为1，即管理员
+        model_user.authority = 1
+        # 将实例写入数据库
+        db.session.add(model_user)
+        db.session.commit()
+        return ops_renderJSON(msg="管理员添加成功！")
+    return ops_renderErrJSON()
+
+
+# 登出前端写，这里做token的处理
+@welcome.route("/logout", methods =["POST"])
+def logout():
+    userId = request.values["userId"] if "userId" in request.values else None
+    token = request.values["token"] if "token" in request.values else None
+    data = {
+        "userId": userId,
+        "token": token
+    } if userId and token is not None else None
+    auth = authCheck(data)
+    if not auth:
+        app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
+        return redirect(url_for("welcome.index"))
+    # else后面接权限正常情况下的代码
+    else:
+        removeFromRedis(userId)
+        return ops_renderJSON(msg="用户已登出!")
+
+
 
 
 # 比如： http://127.0.0.1:5000/manager

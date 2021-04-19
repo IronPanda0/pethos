@@ -20,7 +20,7 @@ def addCase():
         caseName= req['caseName']
         animalName = req['animalName']
         diseaseName = req['diseaseName']
-        diseaseInfo = req['diseaseInfo']
+        caseInfo = req['caseInfo']
         videoUrl = req['videoUrl']
         imageUrl = req['imageUrl']
         caseNameD = Case.query.filter_by(caseName=caseName).first()
@@ -29,8 +29,9 @@ def addCase():
         # 注册写入数据库
         model_case = Case()
         model_case.caseName = caseName
+        model_case.caseName = caseName
+        model_case.caseInfo = caseInfo
         model_case.diseaseName = diseaseName
-        model_case.diseaseinfo = diseaseInfo
         model_case.animalName = animalName
         model_case.videoUrl = videoUrl
         model_case.imageUrl = imageUrl
@@ -39,8 +40,9 @@ def addCase():
         # json化data
         temp = {}
         temp["caseName"] = caseName
+        temp["caseName"] = caseName
+        temp["caseInfo"] = caseInfo
         temp["diseaseName"] = diseaseName
-        temp["diseaseInfo"] = diseaseInfo
         temp["animalName"] = animalName
         temp["videoUrl"] = videoUrl
         temp["imageUrl"] = imageUrl
@@ -53,14 +55,26 @@ def addCase():
 @case.route("/list", methods=['POST'])
 def searchCase():
     if request.method == 'POST':
-        result = db.session.query(Case).all()
+        res = request.values
+        page = int(res['page'])
+        per_page = int(res['per_page'])
+        diseaseName = res['diseaseName']
+        if (page == None):
+            page = 1
+        if (per_page == None):
+            per_page = 10
+        if (len(diseaseName) == 0):
+            result = Case.query.limit(per_page).offset((page - 1) * per_page)
+        else:
+            result = Case.query.filter_by(diseaseName=diseaseName).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
-        if (len(result) != 0):
+        if (result != None):
             for i in result:
                 temp["caseName"] = i.caseName
+                temp["caseName"] = i.caseName
+                temp["caseInfo"] = i.caseInfo
                 temp["diseaseName"] = i.diseaseName
-                temp["diseaseInfo"] = i.diseaseInfo
                 temp["animalName"] = i.animalName
                 temp["videoUrl"] = i.videoUrl
                 temp["imageUrl"] = i.imageUrl
@@ -68,3 +82,34 @@ def searchCase():
             return ops_renderJSON(msg="查询成功", data=data)
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有分类")
+
+
+# 根据caseName删除病例
+@case.route("/delete", methods=['POST'])
+def deletecase():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        caseName = res['caseName']
+        caseNameD = db.session.query(Case).filter(Case.caseName == caseName).first()
+        if caseNameD == None:
+            return ops_renderErrJSON(msg="目前没有该病例，请再次确认")
+        caseInfo = caseNameD.caseInfo
+        diseaseName = caseNameD.diseaseName
+        animalName = caseNameD.animalName
+        videoUrl = caseNameD.videoUrl
+        imageUrl = caseNameD.imageUrl
+        temp = {}
+        temp["caseName"] = caseName
+        temp["caseInfo"] = caseInfo
+        temp["diseaseName"] = diseaseName
+        temp["animalName"] = animalName
+        temp["videoUrl"] = videoUrl
+        temp["imageUrl"] = imageUrl
+        data = []
+        data.append(temp)
+
+        db.session.delete(caseNameD)
+        db.session.commit()
+
+        return ops_renderJSON(msg="删除成功", data=data)
