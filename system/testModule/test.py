@@ -4,12 +4,16 @@ from sqlalchemy import text
 import json
 from init import db
 from model.test import Test
+from model.testpaper import Testpaper
+from model.paperquestion import Paperquestion
+from model.question import Question
 from common.Response import ops_renderErrJSON, ops_renderJSON
-from datetime import datetime,time
+from datetime import datetime, time
 
-test = Blueprint('test', __name__,url_prefix='/test')
+test = Blueprint('test', __name__, url_prefix='/test')
 
-@test.route("/add",methods = ['POST'])
+
+@test.route("/add", methods=['POST'])
 def addTest():
     if request.method == 'POST':
         req = request.values
@@ -21,11 +25,11 @@ def addTest():
         diseaseName = req['diseaseName']
         beginTime = datetime.strptime(beginTimeStr, '%Y%m%d %H:%M')
         endTime = datetime.strptime(endTimeStr, '%Y%m%d %H:%M')
-        #略过数据合法性检测
-        testNameD = Test.query.filter_by(testName = testName).first()
-        if(testNameD):
-            return ops_renderErrJSON(msg= "相同考试已存在，请再换一个试试")
-        #写入数据库
+        # 略过数据合法性检测
+        testNameD = Test.query.filter_by(testName=testName).first()
+        if (testNameD):
+            return ops_renderErrJSON(msg="相同考试已存在，请再换一个试试")
+        # 写入数据库
         model_test = Test()
         model_test.testName = testName
         model_test.paperName = paperName
@@ -42,7 +46,7 @@ def addTest():
         temp["diseaseName"] = diseaseName
         data = []
         data.append(temp)
-        return ops_renderJSON(msg = "添加成功",data = data)
+        return ops_renderJSON(msg="添加成功", data=data)
     return "添加成功"
 
 
@@ -139,3 +143,54 @@ def deleteTest():
         db.session.commit()
 
         return ops_renderJSON(msg="删除成功", data=data)
+
+
+# 根据testId找到PaperID
+@test.route("/paper", methods=['POST'])
+def matchPaper():
+    if request.method == 'POST':
+        res = request.values
+        testId = res.dicts[1]
+        paperIdD = Testpaper.query.filter_by(testId=testId).first()
+
+        if paperIdD is None:
+            return ops_renderErrJSON(msg="试卷尚未创建！")
+        data = getQuestion(paperId=paperIdD.paperId)
+        return ops_renderJSON(msg="成功获取试题集！", data=data)
+    return ops_renderErrJSON()
+
+
+# 根据PaperID返回试题集
+def getQuestion(paperId):
+    questionIdArray = []
+    questionList = Paperquestion.query.filter_by(paperId=paperId)
+    if questionList is not None:
+        for i in questionList:
+            questionIdArray.append(i.questionId)
+    data = questionDetail(questionIdArray)
+    return data
+
+
+# 返回试题细节
+def questionDetail(questionIdArray):
+    data = []
+    temp = {}
+    for i in questionIdArray:
+        questionD = Question.query.filter_by(questionId=i).first()
+        temp["questionId"] = i
+        temp["questionInfo"] = questionD.questionInfo
+        temp["diseaseName"] = questionD.diseaseName
+        temp["score"] = questionD.score
+        temp["choiceA"] = questionD.choiceA
+        temp["choiceB"] = questionD.choiceB
+        temp["choiceC"] = questionD.choiceC
+        temp["choiceD"] = questionD.choiceD
+        data.append(temp.copy())
+    return data
+
+
+# 根据前端返回的数据计算分数
+@test.route("/score")
+def countScore():
+
+    return
