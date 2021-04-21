@@ -1,6 +1,6 @@
 from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
-from common.DataHelper import tokenGen, storeInRedis, getFromRedis, removeFromRedis
+from common.DataHelper import *
 from init import db, app
 from model.user import User
 from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
@@ -125,7 +125,7 @@ def mLogin():
     # 调用redis服务器保存token
     storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
     # 返回给前端的token值，需要前端保存，每次请求数据都要传给后端
-    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
+    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token, "userId":userD.userId}))
     return res
 
 
