@@ -26,13 +26,13 @@ CREATE TABLE `animal` (
   `age` int(11) NOT NULL COMMENT '年龄',
   `temper` double DEFAULT NULL COMMENT '体温',
   `breathe` int(11) DEFAULT NULL COMMENT '呼吸',
-  `heartRate` int(11) DEFAULT NULL COMMENT '心率',
+  `heartRate` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '心率',
   PRIMARY KEY (`animalId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Data for the table `animal` */
 
-insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,10),(2,'小张',10,10,10,10),(3,'小赵',10,10,10,10),(4,'小孙',10,10,10,10),(5,'小李',10,10,10,10);
+insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,'10'),(2,'小张',10,10,10,'10'),(3,'小赵',10,10,10,'10'),(4,'小孙',10,10,10,'10'),(5,'小李',10,10,10,'10');
 
 /*Table structure for table `case` */
 
@@ -44,8 +44,8 @@ CREATE TABLE `case` (
   `animalName` varchar(20) DEFAULT NULL COMMENT '宠物名称',
   `diseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '病种名称',
   `caseInfo` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '文字简介',
-  `videoUrl` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '视频信息',
-  `imageUrl` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片信息',
+  `videoUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '视频信息',
+  `imageUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片信息',
   PRIMARY KEY (`caseId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
@@ -119,11 +119,11 @@ CREATE TABLE `disease` (
   `diseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '病种名称',
   `categoryName` varchar(50) NOT NULL COMMENT '分类名称',
   PRIMARY KEY (`diseaseId`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 /*Data for the table `disease` */
 
-insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (5,'狂犬病1','传染病'),(7,'狂犬病3','传染病'),(8,'狂犬病4','传染病'),(9,'狂犬病5','传染病'),(10,'狂犬病6','传染病'),(11,'狂犬病7','传染病'),(12,'狂犬病8','传染病'),(13,'狂犬病9','传染病'),(14,'狂犬病10','传染病'),(15,'狂犬病11','传染病'),(16,'狂犬病12','传染病'),(17,'胃炎','炎症');
+insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (5,'狂犬病1','传染病'),(7,'狂犬病3','传染病'),(8,'狂犬病4','传染病'),(9,'狂犬病5','传染病'),(10,'狂犬病6','传染病'),(11,'狂犬病7','传染病'),(12,'狂犬病8','传染病'),(13,'狂犬病9','传染病'),(14,'狂犬病10','传染病'),(15,'狂犬病11','传染病'),(16,'狂犬病12','传染病'),(17,'胃炎','炎症'),(18,'狂犬病','传染病');
 
 /*Table structure for table `executes` */
 
@@ -150,7 +150,7 @@ CREATE TABLE `item` (
   `roomId` int(11) DEFAULT NULL COMMENT '科室ID',
   `itemName` varchar(20) DEFAULT NULL COMMENT '物品名称',
   `intro` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '物品简介',
-  `videoUrl` varchar(50) DEFAULT NULL COMMENT '视频信息',
+  `videoUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '视频信息',
   PRIMARY KEY (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -180,14 +180,13 @@ CREATE TABLE `paper` (
   `paperName` varchar(50) DEFAULT NULL COMMENT '试卷名称',
   `sum` int(11) DEFAULT NULL COMMENT '试卷总分',
   `num` int(11) DEFAULT NULL COMMENT '试卷题数',
-  `diseaseId` int(11) DEFAULT NULL COMMENT '所属病种ID',
   `diseaseName` varchar(50) DEFAULT NULL COMMENT '所属病种名称',
   PRIMARY KEY (`paperId`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paper` */
 
-insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseId`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,1,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,NULL,'狂犬病');
+insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病'),(45,'期中考试',20,3,'狂犬病');
 
 /*Table structure for table `paperquestion` */
 
@@ -198,9 +197,11 @@ CREATE TABLE `paperquestion` (
   `paperId` int(11) DEFAULT NULL COMMENT '试卷ID',
   `questionId` int(11) DEFAULT NULL COMMENT '问题ID',
   PRIMARY KEY (`paperQuestionId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paperquestion` */
+
+insert  into `paperquestion`(`paperQuestionId`,`paperId`,`questionId`) values (1,15,1),(2,15,3),(3,15,4),(4,38,1),(5,38,3),(6,38,4),(7,39,1),(8,39,3),(9,39,4),(10,40,1),(11,40,3),(12,40,4),(13,41,1),(14,41,3),(15,41,4),(16,42,1),(17,42,3),(18,42,4),(19,45,1),(20,45,4),(21,45,3);
 
 /*Table structure for table `question` */
 
@@ -233,12 +234,13 @@ CREATE TABLE `room` (
   `intro` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '介绍',
   `employee` varchar(20) DEFAULT NULL COMMENT '负责人姓名',
   `roomName` varchar(20) DEFAULT NULL COMMENT '科室名称',
+  `imgUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '科室图片',
   PRIMARY KEY (`roomId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 /*Data for the table `room` */
 
-insert  into `room`(`roomId`,`intro`,`employee`,`roomName`) values (2,'这是科室1的简介','小王','科室1');
+insert  into `room`(`roomId`,`intro`,`employee`,`roomName`,`imgUrl`) values (2,'这是科室1的简介','小王','科室1',NULL);
 
 /*Table structure for table `task` */
 
@@ -260,7 +262,7 @@ DROP TABLE IF EXISTS `taskprocess`;
 CREATE TABLE `taskprocess` (
   `taskProcessId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '职能学习ID',
   `content` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '职能内容',
-  `imgUrl` varchar(50) DEFAULT NULL COMMENT '图片信息',
+  `imgUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片信息',
   `taskId` int(11) DEFAULT NULL COMMENT '职能ID',
   `process` int(11) DEFAULT NULL COMMENT '流程阶段，0为begin，1为mid，2为end',
   PRIMARY KEY (`taskProcessId`)
