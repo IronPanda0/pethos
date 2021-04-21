@@ -15,10 +15,42 @@ paper = Blueprint('paper', __name__, url_prefix='/paper')
 def addPaper():
     if request.method == 'POST':
         req = request.values
-        questionIDList = request.form.getlist('IdList')
-        testName = req['testName']
-
+        # questionIdList = [1,3,4]
+        questionIdList = req.getlist('IdList')
+        questionIdList = list(map(int, questionIdList))
+        paperName = req['paperName']
+        diseaseName = req['diseaseName']
+        paperD = Paper.query.filter_by(paperName=paperName).first()
+        if (paperD):
+            return ops_renderErrJSON("目前有该试卷，请重试")
+        model_paper = Paper()
+        model_paper.paperName = paperName
+        model_paper.diseaseName = diseaseName
+        db.session.add(model_paper)
+        db.session.flush()
+        curPaperId = model_paper.paperId
+        questionCnt = 0
+        paperScore = 0
+        for i in questionIdList:
+            questionD = Question.query.filter_by(questionId=i).first()
+            print(questionD.questionInfo)
+            scoreD = questionD.score
+            model_paperQuestion = Paperquestion()
+            model_paperQuestion.questionId = i
+            model_paperQuestion.paperId = curPaperId
+            db.session.add(model_paperQuestion)
+            paperScore += scoreD
+            questionCnt += 1
+        paperD = Paper.query.filter_by(paperId=curPaperId).first()
+        model_paper.sum = paperScore
+        model_paper.num = questionCnt
+        db.session.commit()
         temp = {}
+        temp["paperName"] = paperName
+        temp["diseaseName"] = diseaseName
+        temp["sum"] = paperScore
+        temp["num"] = questionCnt
         data = []
-        for i in questionIDList:
-            result = Question.query.filter_by(questionId=i).first()
+        data.append(temp)
+        return ops_renderJSON(msg="添加成功", data=data)
+    return "添加成功"

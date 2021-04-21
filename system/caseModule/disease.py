@@ -4,16 +4,15 @@ from sqlalchemy import text
 import json
 from common.Response import ops_renderErrJSON, ops_renderJSON
 from model.disease import Disease
+from model.case import Case
 disease = Blueprint('diseaseModule', __name__, url_prefix='/disease')
 
 
-@disease.route("/add", methods=['GET', 'POST'])
+@disease.route("/add", methods=['POST'])
 def addDisease():
     from init import db
     # html文件修改为新建题目的文件
-    if request.method == "GET":
-        return render_template("提交疾病.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
         # 暂时略过合法性检测
         diseaseName = req['diseaseName']
@@ -39,7 +38,7 @@ def addDisease():
 
 # 根据分类名称返回疾病
 @disease.route("/list", methods=['POST'])
-def searchDisease():
+def listDisease():
     if request.method == 'POST':
         res = request.values
         categoryName = res['categoryName']
@@ -89,3 +88,23 @@ def deleteDisease():
         db.session.commit()
 
         return ops_renderJSON(msg="删除成功", data=data)
+
+
+@disease.route("/search", methods=['POST'])
+def searchDisease():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        diseaseName = res['diseaseName']
+        diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
+        if diseaseNameD == None:
+            return ops_renderErrJSON(msg="目前没有该病种，请再次确认")
+        categoryName = diseaseNameD.categoryName
+        result = db.session.query(Case).filter(Case.diseaseName == diseaseName).all()
+        caseNum = len(result)
+        temp = {}
+        temp["categoryName"] = categoryName
+        temp["caseNum"] = caseNum
+        data = []
+        data.append(temp)
+        return ops_renderJSON(msg="查询成功", data=data)
