@@ -54,3 +54,28 @@ def addPaper():
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
     return "添加成功"
+
+@paper.route("/delete", methods=['POST'])
+def deletePaper():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        paperName = res['paperName']
+        # diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
+        paperD = db.session.query(Paper).filter(Paper.paperName == paperName).first()
+        if paperD == None:
+            return ops_renderErrJSON(msg="目前没有该试卷，请重新确认")
+        diseaseName = paperD.diseaseName
+        sum = paperD.sum
+        num = paperD.num
+        temp = {}
+        temp["paperName"] = paperName
+        temp["diseaseName"] = diseaseName
+        temp["sum"] = sum
+        temp["num"] = num
+        data = []
+        data.append(temp)
+        db.session.delete(paperD)
+        db.session.commit()
+
+        return ops_renderJSON(msg="删除成功", data=data)

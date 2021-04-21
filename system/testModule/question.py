@@ -99,14 +99,25 @@ def deleteQuestion():
         res = request.values
         questionId = res['questionId']
         # diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
-        questionD = db.session.query(Question).filter(questionId=questionId).first()
+        questionD = db.session.query(Question).filter(Question.questionId == questionId).first()
         if questionD == None:
             return ops_renderErrJSON(msg="目前没有该题目，请重新确认")
 
         db.session.delete(questionD)
         db.session.commit()
-
-        return ops_renderJSON(msg="删除成功")
+        temp = {}
+        data = []
+        temp["questionId"] = i.questionId
+        temp["questionInfo"] = i.questionInfo
+        temp["answer"] = i.answer
+        temp["choiceA"] = i.choiceA
+        temp["choiceB"] = i.choiceB
+        temp["choiceC"] = i.choiceC
+        temp["choiceD"] = i.choiceD
+        temp["score"] = i.score
+        temp["diseaseName"] = i.diseaseName
+        data.append(temp.copy())
+        return ops_renderJSON(msg="删除成功", data=data)
 
 # # 根据病种名称返回所有试题
 # @question.route("/search", methods=['POST'])
