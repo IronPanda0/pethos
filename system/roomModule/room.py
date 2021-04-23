@@ -29,12 +29,14 @@ def addRoom():
         model_room.intro = intro
         model_room.imgUrl = imgUrl
         db.session.add(model_room)
+        db.session.flush()
         db.session.commit()
         temp = {}
         temp["roomName"] = roomName
         temp["intro"] = intro
         temp["employee"] = employee
         temp["imgUrl"] = imgUrl
+        temp["roomId"] = model_room.roomId
         data = []
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
@@ -67,6 +69,7 @@ def updateRoom():
                 temp["employee"] = employee
                 temp["intro"] = intro
                 temp["imgUrl"] = imgUrl
+                temp["roomId"] = roomId
                 data = []
                 data.append(temp)
                 return ops_renderJSON(msg="修改成功", data=data)
@@ -89,12 +92,13 @@ def deleteRoom():
         intro = roomD.intro
         employee = roomD.employee
         imgUrl = roomD.imgUrl
-
+        roomId = roomD.roomId
         temp = {}
         temp["roomName"] = roomName
         temp["intro"] = intro
         temp["employee"] = employee
         temp["imgUrl"] = imgUrl
+        temp["roomId"] = roomId
         data = []
         data.append(temp)
 
@@ -127,7 +131,8 @@ def listRoom():
                 temp["intro"] = i.intro
                 temp["employee"] = i.employee
                 temp["imgUrl"] = i.imgUrl
+                temp["roomId"] = i.roomId
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
-            return ops_renderErrJSON(msg="查询失败，目前没有药品")
+            return ops_renderErrJSON(msg="查询失败，目前没有科室")

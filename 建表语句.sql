@@ -34,6 +34,23 @@ CREATE TABLE `animal` (
 
 insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,'10'),(2,'小张',10,10,10,'10'),(3,'小赵',10,10,10,'10'),(4,'小孙',10,10,10,'10'),(5,'小李',10,10,10,'10');
 
+/*Table structure for table `assay` */
+
+DROP TABLE IF EXISTS `assay`;
+
+CREATE TABLE `assay` (
+  `assayId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '化验项目ID',
+  `name` varchar(50) DEFAULT NULL COMMENT '项目名称',
+  `pay` int(11) DEFAULT NULL COMMENT '费用',
+  `intro` varchar(50) DEFAULT NULL COMMENT '简介',
+  `imgUrl` varchar(100) DEFAULT NULL COMMENT '图片url',
+  PRIMARY KEY (`assayId`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Data for the table `assay` */
+
+insert  into `assay`(`assayId`,`name`,`pay`,`intro`,`imgUrl`) values (1,'拍片',10,'项目简介','test'),(2,'验血',10,'项目简介','test');
+
 /*Table structure for table `case` */
 
 DROP TABLE IF EXISTS `case`;
@@ -53,31 +70,44 @@ CREATE TABLE `case` (
 
 insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`) values (21,'小李的案例','小李','炎症','发炎','test','testtest'),(23,'小明的案例','小明','狂犬病','怕水','test','testtest');
 
-/*Table structure for table `caseconsumable` */
+/*Table structure for table `caseassay` */
 
-DROP TABLE IF EXISTS `caseconsumable`;
+DROP TABLE IF EXISTS `caseassay`;
 
-CREATE TABLE `caseconsumable` (
-  `caseCId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '病例-收费项目ID',
-  `caseId` int(11) DEFAULT NULL COMMENT '病例ID',
-  `consumableId` int(11) DEFAULT NULL COMMENT '收费项目ID',
-  PRIMARY KEY (`caseCId`)
+CREATE TABLE `caseassay` (
+  `caseAId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '病例化验项目ID',
+  `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
+  `assayId` int(10) unsigned NOT NULL COMMENT '化验项目ID',
+  PRIMARY KEY (`caseAId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `caseconsumable` */
+/*Data for the table `caseassay` */
 
-/*Table structure for table `caseexecute` */
+/*Table structure for table `casemedicine` */
 
-DROP TABLE IF EXISTS `caseexecute`;
+DROP TABLE IF EXISTS `casemedicine`;
 
-CREATE TABLE `caseexecute` (
-  `caseEId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '病例-收费项目ID',
-  `caseId` int(11) NOT NULL COMMENT '病例ID',
-  `executeId` int(11) NOT NULL COMMENT '收费项目ID',
-  PRIMARY KEY (`caseEId`)
+CREATE TABLE `casemedicine` (
+  `caseMId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '病例药品ID',
+  `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
+  `medicineId` int(10) unsigned NOT NULL COMMENT '药品ID',
+  PRIMARY KEY (`caseMId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `caseexecute` */
+/*Data for the table `casemedicine` */
+
+/*Table structure for table `casevaccine` */
+
+DROP TABLE IF EXISTS `casevaccine`;
+
+CREATE TABLE `casevaccine` (
+  `caseVId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '病例疫苗ID',
+  `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
+  `vaccineId` int(10) unsigned NOT NULL COMMENT '疫苗ID',
+  PRIMARY KEY (`caseVId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `casevaccine` */
 
 /*Table structure for table `category` */
 
@@ -92,23 +122,6 @@ CREATE TABLE `category` (
 /*Data for the table `category` */
 
 insert  into `category`(`categoryID`,`categoryName`) values (1,'传染病'),(20,'呼吸道疾病');
-
-/*Table structure for table `consumables` */
-
-DROP TABLE IF EXISTS `consumables`;
-
-CREATE TABLE `consumables` (
-  `consumableId` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '收费项目ID',
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目名称',
-  `type` int(11) NOT NULL COMMENT '药品1 疫苗2',
-  `storage` int(11) NOT NULL COMMENT '库存',
-  `pay` int(11) NOT NULL COMMENT '费用',
-  PRIMARY KEY (`consumableId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-/*Data for the table `consumables` */
-
-insert  into `consumables`(`consumableId`,`name`,`type`,`storage`,`pay`) values (1,'新冠疫苗',2,10,10);
 
 /*Table structure for table `disease` */
 
@@ -125,21 +138,18 @@ CREATE TABLE `disease` (
 
 insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (5,'狂犬病1','传染病'),(7,'狂犬病3','传染病'),(8,'狂犬病4','传染病'),(9,'狂犬病5','传染病'),(10,'狂犬病6','传染病'),(11,'狂犬病7','传染病'),(12,'狂犬病8','传染病'),(13,'狂犬病9','传染病'),(14,'狂犬病10','传染病'),(15,'狂犬病11','传染病'),(16,'狂犬病12','传染病'),(17,'胃炎','炎症'),(18,'狂犬病','传染病');
 
-/*Table structure for table `executes` */
+/*Table structure for table `fee` */
 
-DROP TABLE IF EXISTS `executes`;
+DROP TABLE IF EXISTS `fee`;
 
-CREATE TABLE `executes` (
-  `executeId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '执行类ID',
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目名称',
-  `type` int(11) NOT NULL COMMENT '收费种类',
-  `pay` int(11) NOT NULL COMMENT '费用',
-  PRIMARY KEY (`executeId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE `fee` (
+  `feeId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '收费ID',
+  `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
+  `count` int(10) unsigned NOT NULL COMMENT '全部费用',
+  PRIMARY KEY (`feeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `executes` */
-
-insert  into `executes`(`executeId`,`name`,`type`,`pay`) values (1,'X光',2,10);
+/*Data for the table `fee` */
 
 /*Table structure for table `item` */
 
@@ -161,15 +171,35 @@ CREATE TABLE `item` (
 DROP TABLE IF EXISTS `medicine`;
 
 CREATE TABLE `medicine` (
-  `medicineId` int(11) NOT NULL AUTO_INCREMENT COMMENT '药品ID',
-  `medicineName` varchar(50) DEFAULT NULL COMMENT '药品名称',
-  `medicineIntro` varchar(50) DEFAULT NULL COMMENT '药品效果',
+  `medicineId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '药品ID',
+  `name` varchar(50) DEFAULT NULL COMMENT '药品名称',
+  `pay` int(11) DEFAULT NULL COMMENT '费用',
+  `storage` int(11) DEFAULT NULL COMMENT '库存',
+  `intro` varchar(50) DEFAULT NULL COMMENT '简介',
+  `imgUrl` varchar(50) DEFAULT NULL COMMENT '药品图片',
+  `roomName` varchar(50) DEFAULT NULL COMMENT '科室名称',
+  `type` varchar(20) DEFAULT NULL COMMENT '药品种类',
   PRIMARY KEY (`medicineId`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 /*Data for the table `medicine` */
 
-insert  into `medicine`(`medicineId`,`medicineName`,`medicineIntro`) values (2,'传染病疫苗','专治传染病');
+insert  into `medicine`(`medicineId`,`name`,`pay`,`storage`,`intro`,`imgUrl`,`roomName`,`type`) values (17,'疫苗2',10,10,'简介','test','科室1','疫苗'),(18,'药品1',10,10,'简介','test','科室2','药品'),(19,'药品2',10,10,'简介','test','科室2','药品');
+
+/*Table structure for table `medicineroom` */
+
+DROP TABLE IF EXISTS `medicineroom`;
+
+CREATE TABLE `medicineroom` (
+  `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `medicineId` int(10) unsigned NOT NULL COMMENT '药品ID',
+  `roomId` int(10) unsigned NOT NULL COMMENT '科室ID',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+
+/*Data for the table `medicineroom` */
+
+insert  into `medicineroom`(`Id`,`medicineId`,`roomId`) values (12,17,8),(13,18,7),(14,19,7);
 
 /*Table structure for table `paper` */
 
@@ -186,7 +216,7 @@ CREATE TABLE `paper` (
 
 /*Data for the table `paper` */
 
-insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病'),(45,'期中考试',20,3,'狂犬病');
+insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病');
 
 /*Table structure for table `paperquestion` */
 
@@ -236,11 +266,11 @@ CREATE TABLE `room` (
   `roomName` varchar(20) DEFAULT NULL COMMENT '科室名称',
   `imgUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '科室图片',
   PRIMARY KEY (`roomId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 /*Data for the table `room` */
 
-insert  into `room`(`roomId`,`intro`,`employee`,`roomName`,`imgUrl`) values (2,'这是科室1的简介','小王','科室1',NULL);
+insert  into `room`(`roomId`,`intro`,`employee`,`roomName`,`imgUrl`) values (6,'科室简介啦啦啦','小王','新的科室','pictureTest'),(7,'科室简介','负责人小王','科室2','test'),(8,'科室简介','负责人小王','科室1','test'),(9,'科室简介啦啦啦','小王','新的科室111','pictureTest');
 
 /*Table structure for table `task` */
 
@@ -326,7 +356,7 @@ CREATE TABLE `user` (
   `passWord` varchar(20) DEFAULT NULL COMMENT '密码',
   `authority` int(11) DEFAULT NULL COMMENT '权限',
   `age` int(11) DEFAULT NULL COMMENT '年龄',
-  `gender` int(11) DEFAULT NULL COMMENT '性别',
+  `gender` varchar(10) DEFAULT NULL COMMENT '性别',
   `mail` varchar(50) DEFAULT NULL COMMENT '邮箱',
   PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -345,11 +375,29 @@ CREATE TABLE `userrole` (
   `duty` varchar(500) DEFAULT NULL,
   `process` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`userRoleId`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Data for the table `userrole` */
 
-insert  into `userrole`(`userRoleId`,`userName`,`role`,`content`,`duty`,`process`) values (1,'小王','医师','干活','什么的干活','流程1，2，3'),(2,'小王','医助','干活','什么的干活','流程1，2，3'),(3,'小王','前台','干活','什么的干活','流程1，2，3');
+insert  into `userrole`(`userRoleId`,`userName`,`role`,`content`,`duty`,`process`) values (1,'小王','医师','干活','什么的干活','流程1，2，3'),(5,'小王','前台','干活','什么的干活啦啦啦','流程3,2，1'),(6,'小张','前台','干活','什么的干活啦啦啦','流程3,2，1');
+
+/*Table structure for table `vaccine` */
+
+DROP TABLE IF EXISTS `vaccine`;
+
+CREATE TABLE `vaccine` (
+  `vaccineId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '疫苗ID',
+  `name` varchar(50) DEFAULT NULL COMMENT '疫苗名称',
+  `pay` int(11) DEFAULT NULL COMMENT '费用',
+  `storage` int(11) DEFAULT NULL COMMENT '库存',
+  `intro` varchar(50) DEFAULT NULL COMMENT '疫苗名称',
+  `imgUrl` varchar(100) DEFAULT NULL COMMENT '疫苗图片',
+  PRIMARY KEY (`vaccineId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `vaccine` */
+
+insert  into `vaccine`(`vaccineId`,`name`,`pay`,`storage`,`intro`,`imgUrl`) values (1,'狂犬病疫苗',10,5,'药品简介','test');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -12,9 +12,7 @@ question = Blueprint('question', __name__,url_prefix='/question')
 @question.route("/add", methods=['GET', 'POST'])
 def addQuestion():
     # html文件修改为新建题目的文件
-    if request.method == "GET":
-        return render_template("提交题目.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
         # 暂时略过合法性检测
         questionInfo = req['questionInfo']
