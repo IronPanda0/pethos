@@ -51,33 +51,36 @@ def updateUserRole():
     from init import db
     if request.method == 'POST':
         res = request.values
+        userRoleId = res['userRoleId']
         userName = res['userName']
         role = res['role']
         content = res['content']
         duty = res['duty']
         process = res['process']
         userRoleD = Userrole.query.filter_by(userName=userName, role=role).first()
-        if (userRoleD):
-            return ops_renderErrJSON(msg="该用户已有此角色，请换一个试试")
-        model_userRole = Userrole()
-        model_userRole.userName = userName
-        model_userRole.role = role
-        model_userRole.content = content
-        model_userRole.process = process
-        model_userRole.duty = duty
-
-        db.session.add(model_userRole)
-        db.session.commit()
-        temp = {}
-        temp['userName'] = userName
-        temp['role'] = role
-        temp['content'] = content
-        temp['process'] = process
-        temp['duty'] = duty
-        data = []
-        data.append(temp)
-        return ops_renderJSON(msg="修改成功", data=data)
-    return "修改成功"
+        if userRoleD != None:
+            for i in userRoleD:
+                if i.role == role:
+                    return ops_renderErrJSON(msg="该用户已有此角色，请换一个试试")
+        else:
+            userRoleU = db.session.query(Userrole).filter_by(userRoleId=userRoleId)
+            if userRoleU != None:
+                userRoleU.role = role
+                userRoleU.content = content
+                userRoleU.process = process
+                userRoleU.duty = duty
+                db.session.commit()
+                temp = {}
+                temp['userName'] = userName
+                temp['role'] = role
+                temp['content'] = content
+                temp['process'] = process
+                temp['duty'] = duty
+                data = []
+                data.append(temp)
+                return ops_renderJSON(msg="用户角色修改成功", data=data)
+            else:
+                return ops_renderErrJSON(msg="不存在这个用户，无法修改")
 
 
 @userRole.route("/list", methods=['POST'])

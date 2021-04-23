@@ -53,7 +53,7 @@ def addCase():
 
 
 @case.route("/list", methods=['POST'])
-def searchCase():
+def listCase():
     if request.method == 'POST':
         res = request.values
         page = int(res['page'])

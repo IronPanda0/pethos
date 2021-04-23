@@ -48,7 +48,7 @@ def listDisease():
             page = 1
         if (per_page == None):
             per_page = 10
-        if (categoryName == None):
+        if (len(categoryName) == 0):
             result = Disease.query.limit(per_page).offset((page - 1) * per_page)
         else:
             result = Disease.query.filter_by(categoryName=categoryName).limit(per_page).offset((page - 1) * per_page)

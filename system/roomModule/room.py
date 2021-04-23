@@ -12,28 +12,29 @@ room = Blueprint('room', __name__, url_prefix='/room')
 
 @room.route("/add", methods=['POST'])
 def addRoom():
-    if request.method == "GET":
-        return render_template("新增room.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
         roomName = req['roomName']
         employee = req['employee']
         intro = req['intro']
+        imgUrl = req['imgUrl']
         # 略过数据合法性检测
         roomNameD = Room.query.filter_by(roomName=roomName).first()
         if (roomNameD):
-            return ops_renderErrJSON(msg="相同科室已存在，请再换一个试试")
+            return ops_renderErrJSON(msg="相同科室名已存在，请再换一个试试")
         # 写入数据库
         model_room = Room()
         model_room.roomName = roomName
         model_room.employee = employee
         model_room.intro = intro
+        model_room.imgUrl = imgUrl
         db.session.add(model_room)
         db.session.commit()
         temp = {}
         temp["roomName"] = roomName
         temp["intro"] = intro
         temp["employee"] = employee
+        temp["imgUrl"] = imgUrl
         data = []
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
@@ -44,25 +45,28 @@ def addRoom():
 def updateRoom():
     if request.method == 'POST':
         req = request.values
-        roomNameOld = req['roomNameOld']
+        roomId = req['roomId']
         roomNameNew = req['roomNameNew']
         employee = req['employee']
         intro = req['intro']
+        imgUrl = req['imgUrl']
         roomNameD = db.session.query(Room).filter_by(roomName=roomNameNew).first()
         if roomNameD:
-            return ops_renderErrJSON(msg="科室已经存在，请换一个再试试。")
+            return ops_renderErrJSON(msg="相同科室名已经存在，请换一个再试试。")
         else:
-            roomNameU = db.session.query(Room).filter_by(roomName=roomNameOld).first()
+            roomNameU = db.session.query(Room).filter_by(roomId=roomId).first()
             if roomNameU != None:
                 roomNameU.roomName = roomNameNew
                 roomNameU.employee = employee
                 roomNameU.intro = intro
+                roomNameU.imgUrl = imgUrl
                 db.session.commit()
                 # json化data
                 temp = {}
                 temp["roomName"] = roomNameNew
                 temp["employee"] = employee
                 temp["intro"] = intro
+                temp["imgUrl"] = imgUrl
                 data = []
                 data.append(temp)
                 return ops_renderJSON(msg="修改成功", data=data)
@@ -77,21 +81,24 @@ def deleteRoom():
     from init import db
     if request.method == 'POST':
         res = request.values
-        roomName = res['roomName']
-        roomNameD = db.session.query(Room).filter(Room.roomName == roomName).first()
-        if roomNameD == None:
+        roomId = res['roomId']
+        roomD = db.session.query(Room).filter_by(roomId=roomId).first()
+        if roomD == None:
             return ops_renderErrJSON(msg="目前没有该科室，请再次确认")
-        intro = roomNameD.intro
-        employee = roomNameD.employee
+        roomName = roomD.roomName
+        intro = roomD.intro
+        employee = roomD.employee
+        imgUrl = roomD.imgUrl
 
         temp = {}
         temp["roomName"] = roomName
         temp["intro"] = intro
         temp["employee"] = employee
+        temp["imgUrl"] = imgUrl
         data = []
         data.append(temp)
 
-        db.session.delete(roomNameD)
+        db.session.delete(roomD)
         db.session.commit()
 
         return ops_renderJSON(msg="删除成功", data=data)
@@ -101,12 +108,16 @@ def deleteRoom():
 def listRoom():
     if request.method == 'POST':
         res = request.values
-        page = int(res['page'])
-        per_page = int(res['per_page'])
-        if (page == None):
+        page = res['page']
+        per_page = res['per_page']
+        if (page == ''):
             page = 1
-        if (per_page == None):
+        else:
+            page = int(page)
+        if (per_page == ''):
             per_page = 10
+        else:
+            per_page = int(per_page)
         result = Room.query.limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
@@ -115,6 +126,7 @@ def listRoom():
                 temp["roomName"] = i.roomName
                 temp["intro"] = i.intro
                 temp["employee"] = i.employee
+                temp["imgUrl"] = i.imgUrl
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
