@@ -54,12 +54,12 @@ def updateRoom():
         if roomNameD:
             return ops_renderErrJSON(msg="相同科室名已经存在，请换一个再试试。")
         else:
-            roomNameU = db.session.query(Room).filter_by(roomId=roomId).first()
-            if roomNameU != None:
-                roomNameU.roomName = roomNameNew
-                roomNameU.employee = employee
-                roomNameU.intro = intro
-                roomNameU.imgUrl = imgUrl
+            roomU = db.session.query(Room).filter_by(roomId=roomId).first()
+            if roomU != None:
+                roomU.roomName = roomNameNew
+                roomU.employee = employee
+                roomU.intro = intro
+                roomU.imgUrl = imgUrl
                 db.session.commit()
                 # json化data
                 temp = {}
@@ -121,7 +121,7 @@ def listRoom():
         result = Room.query.limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
-        if (result != None):
+        if (result.count() != 0):
             for i in result:
                 temp["roomName"] = i.roomName
                 temp["intro"] = i.intro

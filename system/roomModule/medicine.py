@@ -94,12 +94,16 @@ def deletemedicine():
 def listMedicine():
     if request.method == 'POST':
         res = request.values
-        page = int(res['page'])
-        per_page = int(res['per_page'])
-        if (page == None):
+        page = res['page']
+        per_page = res['per_page']
+        if (page == ''):
             page = 1
-        if (per_page == None):
+        else:
+            page = int(page)
+        if (per_page == ''):
             per_page = 10
+        else:
+            per_page = int(per_page)
         result = Medicine.query.limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []

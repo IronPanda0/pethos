@@ -11,8 +11,6 @@ userRole = Blueprint('userRoleModule', __name__, url_prefix='/userRole')
 @userRole.route("/add", methods=['GET', 'POST'])
 def addUserRole():
     from init import db
-    if request.method == 'GET':
-        return "增加角色.html"
     if request.method == 'POST':
         res = request.values
         userName = res['userName']
@@ -57,13 +55,11 @@ def updateUserRole():
         content = res['content']
         duty = res['duty']
         process = res['process']
-        userRoleD = Userrole.query.filter_by(userName=userName, role=role).first()
-        if userRoleD != None:
-            for i in userRoleD:
-                if i.role == role:
-                    return ops_renderErrJSON(msg="该用户已有此角色，请换一个试试")
+        userRoleD = db.session.query(Userrole).filter_by(userName=userName, role=role).first()
+        if userRoleD:
+            return ops_renderErrJSON(msg="该用户已有此角色，请换一个试试")
         else:
-            userRoleU = db.session.query(Userrole).filter_by(userRoleId=userRoleId)
+            userRoleU = db.session.query(Userrole).filter_by(userRoleId=userRoleId).first()
             if userRoleU != None:
                 userRoleU.role = role
                 userRoleU.content = content
@@ -87,20 +83,24 @@ def updateUserRole():
 def listUserRoles():
     if request.method == 'POST':
         res = request.values
-        page = int(res['page'])
-        per_page = int(res['per_page'])
         userName = res['userName']
-        if (page == None):
+        page = res['page']
+        per_page = res['per_page']
+        if (page == ''):
             page = 1
-        if (per_page == None):
+        else:
+            page = int(page)
+        if (per_page == ''):
             per_page = 10
+        else:
+            per_page = int(per_page)
         if (len(userName) == 0):
             result = Userrole.query.limit(per_page).offset((page - 1) * per_page)
         else:
             result = Userrole.query.filter_by(userName=userName).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
-        if (result != None):
+        if (result.count() != 0):
             for i in result:
                 temp['userRoleId'] = i.userRoleId
                 temp['userName'] = i.userName
@@ -111,7 +111,7 @@ def listUserRoles():
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
-            return ops_renderErrJSON(msg="查询失败，目前没有角色")
+            return ops_renderErrJSON(msg="查询失败，目前该用户没有角色")
 
 
 @userRole.route("/delete", methods=['POST'])
@@ -119,16 +119,16 @@ def deleteUserRole():
     from init import db
     if request.method == 'POST':
         res = request.values
-        userName = res['userName']
-        role = res['role']
+        userRoleId = res['userRoleId']
         # diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
-        userRoleD = db.session.query(Userrole).filter(Userrole.userName == userName, Userrole.role == role).first()
+        userRoleD = db.session.query(Userrole).filter_by(userRoleId=userRoleId).first()
         if userRoleD == None:
             return ops_renderErrJSON(msg="目前没有该角色，请重新确认")
-
         temp = {}
-        temp['userName'] = userName
-        temp['role'] = role
+        temp['userName'] = userRoleD.userName
+        temp['role'] = userRoleD.role
+        temp['duty'] = userRoleD.duty
+        temp['process'] = userRoleD.process
         data = []
         data.append(temp)
 
