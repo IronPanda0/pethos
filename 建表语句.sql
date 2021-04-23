@@ -92,9 +92,11 @@ CREATE TABLE `casemedicine` (
   `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
   `medicineId` int(10) unsigned NOT NULL COMMENT '药品ID',
   PRIMARY KEY (`caseMId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 /*Data for the table `casemedicine` */
+
+insert  into `casemedicine`(`caseMId`,`caseId`,`medicineId`) values (1,21,18),(2,21,18),(3,21,19);
 
 /*Table structure for table `casevaccine` */
 
@@ -146,10 +148,13 @@ CREATE TABLE `fee` (
   `feeId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '收费ID',
   `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
   `count` int(10) unsigned NOT NULL COMMENT '全部费用',
+  `caseName` varchar(50) NOT NULL COMMENT '病例名称',
   PRIMARY KEY (`feeId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 /*Data for the table `fee` */
+
+insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (1,21,30,'小李的案例'),(2,23,0,'小明的案例');
 
 /*Table structure for table `item` */
 
