@@ -41,7 +41,7 @@ def addPaper():
             db.session.add(model_paperQuestion)
             paperScore += scoreD
             questionCnt += 1
-        paperD = Paper.query.filter_by(paperId=curPaperId).first()
+        # paperD = Paper.query.filter_by(paperId=curPaperId).first()
         model_paper.sum = paperScore
         model_paper.num = questionCnt
         db.session.commit()

@@ -4,6 +4,8 @@ from sqlalchemy import text
 import json
 from init import db
 from model.case import Case
+from model.medicine import Medicine
+from model.casemedicine import Casemedicine
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
 case = Blueprint('caseModule', __name__, url_prefix='/case')
@@ -12,12 +14,10 @@ case = Blueprint('caseModule', __name__, url_prefix='/case')
 @case.route("/add", methods=['GET', 'POST'])
 def addCase():
     # html文件修改为新建题目的文件
-    if request.method == "GET":
-        return render_template("提交病例.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
         # 暂时略过合法性检测
-        caseName= req['caseName']
+        caseName = req['caseName']
         animalName = req['animalName']
         diseaseName = req['diseaseName']
         caseInfo = req['caseInfo']
@@ -113,3 +113,28 @@ def deletecase():
         db.session.commit()
 
         return ops_renderJSON(msg="删除成功", data=data)
+
+
+@case.route("/addCaseMedicine", methods=['POST'])
+def addCaseMedicine():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        caseId = res['caseId']
+        medicineName = res['medicineName']
+        medicineD = db.session.query(Medicine).filter_by(name=medicineName).first()
+        if medicineD == None:
+            return ops_renderErrJSON(msg="没有这种药品，请确认后再添加")
+        else:
+            curMedicineId = medicineD.medicineId
+            model_caseMedicine = Casemedicine()
+            model_caseMedicine.medicineId = curMedicineId
+            model_caseMedicine.caseId = caseId
+            db.session.add(model_caseMedicine)
+            db.session.commit()
+        temp = {}
+        temp["caseId"] = caseId
+        temp["medicineName"] = medicineName
+        data = []
+        data.append(temp)
+        return ops_renderJSON(msg="病例添加药品成功", data=data)
