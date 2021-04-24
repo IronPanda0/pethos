@@ -2,22 +2,29 @@ from flask import Blueprint, request, make_response, render_template, jsonify, r
 from flask_cors import CORS
 from sqlalchemy import text
 import json
+
+from common.userAuth import *
 from init import db, app
 from model.room import Room
 from model.item import Item
-from common.Response import ops_renderErrJSON, ops_renderJSON
+from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
 
 # created by lzy
 
 # 蓝图对象，前端页面
-map = Blueprint('map', __name__,url_prefix='/map')
+map = Blueprint('map', __name__, url_prefix='/map')
 
-#点击医院导览后
-#返回所有科室信息及物品信息
-@map.route('/show',methods = ['GET','POST'])
+
+# 点击医院导览后
+# 返回所有科室信息及物品信息
+@map.route('/show', methods=['GET', 'POST'])
 def hos_map():
-    if request.method == 'GET':
-        #数据库查询
+    auth = authRes(request)
+    if auth is not None:
+        return auth
+    # else后面接权限正常情况下的代码
+    elif request.method == 'GET':
+        # 数据库查询
         room = Room.query.all()
 
         temp1 = {}
@@ -33,7 +40,7 @@ def hos_map():
                 temp1['employee'] = i.employee
                 temp1['intro'] = i.intro
                 r = i.roomId
-                item = Item.query.filter_by(roomId = r).all()
+                item = Item.query.filter_by(roomId=r).all()
                 temp1['items'] = []
                 if (item != None):
                     for j in item:
@@ -42,10 +49,4 @@ def hos_map():
                         temp2['imgUrl'] = j.videoUrl
                         temp1['items'].append(temp2.copy())
                 data.append(temp1.copy())
-            return ops_renderJSON(msg="科室信息返回成功",data = data)
-
-
-
-    
-
-
+            return ops_renderJSON(msg="科室信息返回成功", data=data)

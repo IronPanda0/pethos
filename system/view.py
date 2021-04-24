@@ -5,6 +5,7 @@ from init import db, app
 from model.user import User
 from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
 from common.userAuth import *
+import sha3
 
 CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
@@ -29,11 +30,17 @@ def loginConfirm():
     username = req['username']
     password = req['password']
     print(username)
+
     # 判断用户名和密码合法性
     if username is None or len(username) < 1:
         return ops_renderErrJSON(msg="请输入正确的登录用户名~~")
     if password is None or len(password) < 6:
         return ops_renderErrJSON(msg="请输入正确的登录密码，并且不能小于6个字符~~")
+    # 密码哈希
+    sha = sha3.keccak_256()
+    password = password.encode('utf-8')
+    sha.update(password)
+    password = sha.hexdigest()
     # 以下为查询语句，first()表示返回查到符合条件的第一条数据
     userD = User.query.filter_by(userName=username).first()
     if not userD:
@@ -50,9 +57,9 @@ def loginConfirm():
     }
     token = tokenGen(user)
     # 调用redis服务器保存token
-    storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
+    storeInRedis(userD.userId, token, expire=3600 * 24)
     # 返回给前端的token值，需要前端保存，每次请求数据都要检查
-    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token}))
+    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token, "userId": userD.userId}))
 
     # 这里删除操作成功
     # removeFromRedis(userD.userId)
@@ -78,6 +85,11 @@ def register():
             return ops_renderErrJSON(msg="两次密码不一致，请检查无误再操作~~")
         #         以下为查询语句，first()表示返回查到符合条件的第一条数据
         #         找到第一个同名的用户名
+        # 密码哈希
+        sha = sha3.keccak_256()
+        password = password.encode('utf-8')
+        sha.update(password)
+        password = sha.hexdigest()
         userD = User.query.filter_by(userName=username).first()
         if userD:
             return ops_renderErrJSON(msg="用户名已经存在，请换一个再试试。")
@@ -125,7 +137,7 @@ def mLogin():
     # 调用redis服务器保存token
     storeInRedis(userD.userId, token, expire=3600 * 24 * 7)
     # 返回给前端的token值，需要前端保存，每次请求数据都要传给后端
-    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token, "userId":userD.userId}))
+    res = make_response(ops_renderJSON(msg="登录成功~~", data={"token": token, "userId": userD.userId}))
     return res
 
 
@@ -161,24 +173,15 @@ def mRegister():
 
 
 # 登出前端写，这里做token的处理
-@welcome.route("/logout", methods =["POST"])
+@welcome.route("/logout", methods=["POST"])
 def logout():
-    userId = request.values["userId"] if "userId" in request.values else None
-    token = request.values["token"] if "token" in request.values else None
-    data = {
-        "userId": userId,
-        "token": token
-    } if userId and token is not None else None
-    auth = authCheck(data)
-    if not auth:
-        app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
-        return redirect(url_for("welcome.index"))
+    auth = authRes(request)
+    if auth is not None:
+        return auth
     # else后面接权限正常情况下的代码
     else:
-        removeFromRedis(userId)
-        return ops_renderJSON(msg="用户已登出!")
-
-
+        removeFromRedis(request.headers.environ['HTTP_USERID'])
+        return ops_renderJSON(msg="用户已登出!", data={index: app.config["DOMAIN"]["www"]})
 
 
 # 比如： http://127.0.0.1:5000/manager
