@@ -65,10 +65,10 @@
       </div>
       <div class="row">
         <button type="button" class="btn btn-outline-primary btn-lg my-button1">
-          <a href="{{ url_for('welcome.index',entrance='user') }}" >用户入口</a>
+          <a href="%% url_for('welcome.index',entrance="user") %%">用户入口</a>
         </button>
         <button type="button" class="btn btn-outline-primary btn-lg  my-button2">
-          <a href="{{ url_for('welcome.index',entrance='manager') }}">管理员入口</a>
+          <a href="%% url_for('welcome.index',entrance="manager") %%">管理员入口</a>
         </button>
       </div>
     </div>

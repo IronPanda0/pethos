@@ -10,14 +10,16 @@ from system.testModule.test import test
 from system.testModule.paper import paper
 from system.userRole import userRole
 from system.roomModule.room import room
-from system.costModule.medicine import medicine
-from system.costModule.fee import fee
 from system.manager.managerCon import manager
+from system.costModule.fee import fee
 # from flask_debugtoolbar import DebugToolbarExtension
 from system.instance.view import instance
 # from flask_debugtoolbar import DebugToolbarExtension
 from interceptor.errorHandler import *
 from common.urlmanager import UrlManager
+# created by lzy
+from system.map.map import map
+from system.frontRole.role import role
 
 # toolbar = DebugToolbarExtension(app)
 
@@ -38,7 +40,10 @@ app.register_blueprint(test)
 app.register_blueprint(paper)
 app.register_blueprint(userRole)
 app.register_blueprint(room)
-app.register_blueprint(medicine)
+# created by lzy
+app.register_blueprint(map)
+app.register_blueprint(role)
+
 app.register_blueprint(fee)
 app.add_template_global(UrlManager.buildStaticUrl, 'buildStaticUrl')
 app.add_template_global(UrlManager.buildUrl, 'buildUrl')

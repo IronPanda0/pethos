@@ -50,6 +50,32 @@ def addTest():
     return "添加成功"
 
 
+# 前台返回根据病种名返回所有考试
+@test.route("/flist", methods=['POST'])
+def fListTest():
+    if request.method == 'POST':
+        res = request.values
+        diseaseName = res['diseaseName[0]'] if 'diseaseName[0]' in res else res['diseaseName']
+        if (len(diseaseName) == 0):
+            result = Test.query.limit(100)
+        else:
+            result = Test.query.filter_by(diseaseName=diseaseName)
+        temp = {}
+        data = []
+        if (result != None):
+            for i in result:
+                temp["testId"] = i.testId
+                temp["testName"] = i.testName
+                temp["paperName"] = i.paperName
+                temp["beginTime"] = i.beginTime
+                temp["endTime"] = i.endTime
+                temp["diseaseName"] = i.diseaseName
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
+    return ops_renderJSON(msg="查询成功")
+
 # 根据病种名称返回分页所有考试
 @test.route("/list", methods=['POST'])
 def listTest():
@@ -57,11 +83,11 @@ def listTest():
         res = request.values
         page = int(res['page'])
         per_page = int(res['per_page'])
-        diseaseName = res['diseaseName[0]']
+        diseaseName = res['diseaseName[0]'] if 'diseaseName[0]' in res else res['diseaseName']
         if (page == None):
             page = 1
         if (per_page == None):
-            per_page = 10
+            per_page = 15
         if (len(diseaseName) == 0):
             result = Test.query.limit(per_page).offset((page - 1) * per_page)
         else:
@@ -146,11 +172,13 @@ def deleteTest():
 
 
 # 根据testId找到PaperID
-@test.route("/paper", methods=['POST'])
+@test.route("/paper", methods=['POST','GET'])
 def matchPaper():
-    if request.method == 'POST':
+    if request.method == 'POST' or 'GET':
         res = request.values
-        testId = res.dicts[1]
+        # 由于前端拿到的数组是字符串数组，需要转化成整型
+        testId = res.getlist('testId')
+        testId = list(map(int, testId))
         paperIdD = Testpaper.query.filter_by(testId=testId).first()
 
         if paperIdD is None:
@@ -192,5 +220,37 @@ def questionDetail(questionIdArray):
 # 根据前端返回的数据计算分数
 @test.route("/score")
 def countScore():
+    if request.method == 'POST':
+        res = request.values
+        result = res.getlist('result')
+        questionIdArray = []
+        for i in result:
+            questionIdArray.append(int(i.questionId))
+        #     获取试题答案及分值
+        score = 0
+        sumscore = 0
+        data = questionAnswer(questionIdArray)
+        for i in data:
+            sumscore += i["score"]
+            for j in result:
+                if i["questionId"] == j["questionId"] and i["answer"] == j["answer"]:
+                    score += i["score"]
+        data = {
+            "score": score,
+            "sumscore" : sumscore
+        }
+        return ops_renderJSON(msg="分数计算成功", data=data)
+    return ops_renderErrJSON()
 
-    return
+
+# 返回试题答案
+def questionAnswer(questionIdArray):
+    data = []
+    temp = {}
+    for i in questionIdArray:
+        questionD = Question.query.filter_by(questionId=i).first()
+        temp["questionId"] = i
+        temp["score"] = questionD.score
+        temp["answer"] = questionD.answer
+        data.append(temp.copy())
+    return data

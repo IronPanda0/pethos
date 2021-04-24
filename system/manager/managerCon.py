@@ -22,7 +22,7 @@ def managerList():
     auth = authCheck(data)
     if not auth:
         app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
-        return redirect(url_for("welcome.index"))
+        return ops_renderIllegalJSON()
     # else后面接权限正常情况下的代码
     else:
         if request.method == 'POST':
