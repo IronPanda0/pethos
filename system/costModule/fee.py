@@ -17,13 +17,14 @@ def listFee():
         from init import db
         resultCase = db.session.query(Case).all()
         tempMedicine = {}
-
+        tempCount = []
         for i in resultCase:
             total = 0
             resultCaseMedicine = db.session.query(Casemedicine).filter_by(caseId=i.caseId).all()
             for j in resultCaseMedicine:
                 curMedicineId = j.medicineId
                 medicineD = db.session.query(Medicine).filter_by(medicineId=curMedicineId).first()
+                # tempMedicine["name"] =
                 total += medicineD.pay
             model_fee = Fee()
             model_fee.caseId = i.caseId
