@@ -1,5 +1,7 @@
 # coding: utf-8
-from init import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class Testpaper(db.Model):

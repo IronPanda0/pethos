@@ -4,6 +4,7 @@ from sqlalchemy import text
 import json
 from init import db
 from model.question import Question
+from model.disease import Disease
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
 question = Blueprint('question', __name__,url_prefix='/question')
@@ -40,6 +41,7 @@ def addQuestion():
         db.session.commit()
         # json化data
         temp = {}
+        temp["questionId"] = model_question.questionId
         temp["questionInfo"] = questionInfo
         temp["answer"] = answer
         temp["choiceA"] = choiceA
@@ -105,17 +107,67 @@ def deleteQuestion():
         db.session.commit()
         temp = {}
         data = []
-        temp["questionId"] = i.questionId
-        temp["questionInfo"] = i.questionInfo
-        temp["answer"] = i.answer
-        temp["choiceA"] = i.choiceA
-        temp["choiceB"] = i.choiceB
-        temp["choiceC"] = i.choiceC
-        temp["choiceD"] = i.choiceD
-        temp["score"] = i.score
-        temp["diseaseName"] = i.diseaseName
+        temp["questionId"] = questionD.questionId
+        temp["questionInfo"] = questionD.questionInfo
+        temp["answer"] = questionD.answer
+        temp["choiceA"] = questionD.choiceA
+        temp["choiceB"] = questionD.choiceB
+        temp["choiceC"] = questionD.choiceC
+        temp["choiceD"] = questionD.choiceD
+        temp["score"] = questionD.score
+        temp["diseaseName"] = questionD.diseaseName
         data.append(temp.copy())
         return ops_renderJSON(msg="删除成功", data=data)
+
+
+@question.route("/update", methods=['POST'])
+def updateQuestion():
+    from init import db
+    if request.method == 'POST':
+        req = request.values
+        questionId = req['questionId']
+        questionInfo = req['questionInfo']
+        answer = req['answer']
+        diseaseName = req['diseaseName']
+        score = req['score']
+        choiceA = req['choiceA']
+        choiceB = req['choiceB']
+        choiceC = req['choiceC']
+        choiceD = req['choiceD']
+
+        questionU = db.session.query(Question).filter_by(questionId=questionId).first()
+        questionInfoD = db.session.query(Question).filter_by(questionInfo=questionInfo).first()
+        if questionInfoD != None:
+            return ops_renderErrJSON("已有相同题干，请重试")
+        diseaseNameD = db.session.query(Disease).filter_by(diseaseName=diseaseName).first()
+
+        if diseaseNameD == None:
+            return ops_renderErrJSON(msg="当前没有该病种，请确认后再修改")
+        else:
+            questionU.questionInfo = questionInfo
+            questionU.answer = answer
+            questionU.diseaseName = diseaseName
+            questionU.score = score
+            questionU.choiceA = choiceA
+            questionU.choiceB = choiceB
+            questionU.choiceC = choiceC
+            questionU.choiceD = choiceD
+            db.session.commit()
+
+            # json化data
+            temp = {}
+            temp["questionId"] = questionId
+            temp["questionInfo"] = questionInfo
+            temp["answer"] = answer
+            temp["choiceA"] = choiceA
+            temp["choiceB"] = choiceB
+            temp["choiceC"] = choiceC
+            temp["choiceD"] = choiceD
+            temp["score"] = score
+            temp["diseaseName"] = diseaseName
+            data = []
+            data.append(temp)
+            return ops_renderJSON(msg="修改问题成功", data=data)
 
 # # 根据病种名称返回所有试题
 # @question.route("/search", methods=['POST'])

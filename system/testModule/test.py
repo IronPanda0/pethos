@@ -4,6 +4,7 @@ from sqlalchemy import text
 import json
 from init import db
 from model.test import Test
+from model.paper import Paper
 from model.testpaper import Testpaper
 from model.paperquestion import Paperquestion
 from model.question import Question
@@ -15,24 +16,26 @@ test = Blueprint('test', __name__, url_prefix='/test')
 
 @test.route("/add", methods=['POST'])
 def addTest():
+    from init import db
     if request.method == 'POST':
         req = request.values
 
         testName = req['testName']
-        paperName = req['paperName']
+        paperId = req['paperId']
+        diseaseName = req['diseaseName']
         beginTimeStr = req['beginTime']
         endTimeStr = req['endTime']
-        diseaseName = req['diseaseName']
-        beginTime = datetime.strptime(beginTimeStr, '%Y%m%d %H:%M')
-        endTime = datetime.strptime(endTimeStr, '%Y%m%d %H:%M')
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
         # 略过数据合法性检测
         testNameD = Test.query.filter_by(testName=testName).first()
         if (testNameD):
             return ops_renderErrJSON(msg="相同考试已存在，请再换一个试试")
+        paperD = Paper.query.filter_by(paperId=paperId).first()
         # 写入数据库
         model_test = Test()
         model_test.testName = testName
-        model_test.paperName = paperName
+        model_test.paperName = paperD.paperName
         model_test.beginTime = beginTime
         model_test.endTime = endTime
         model_test.diseaseName = diseaseName
@@ -40,7 +43,7 @@ def addTest():
         db.session.commit()
         temp = {}
         temp["testName"] = testName
-        temp["paperName"] = paperName
+        temp["paperName"] = paperD.paperName
         temp["beginTime"] = beginTime
         temp["endTime"] = endTime
         temp["diseaseName"] = diseaseName
@@ -57,12 +60,12 @@ def listTest():
         res = request.values
         page = int(res['page'])
         per_page = int(res['per_page'])
-        diseaseName = res['diseaseName[0]']
+        diseaseName = res['diseaseName']
         if (page == None):
             page = 1
         if (per_page == None):
             per_page = 10
-        if (len(diseaseName) == 0):
+        if (diseaseName == "all"):
             result = Test.query.limit(per_page).offset((page - 1) * per_page)
         else:
             result = Test.query.filter_by(diseaseName=diseaseName).limit(per_page).offset((page - 1) * per_page)
@@ -121,16 +124,18 @@ def deleteTest():
     from init import db
     if request.method == 'POST':
         res = request.values
-        testName = res['testName']
-        testNameD = db.session.query(Test).filter(Test.testName == testName).first()
-        if testNameD == None:
+        testId = res['testId']
+        testD = db.session.query(Test).filter_by(testId=testId).first()
+        if testD == None:
             return ops_renderErrJSON(msg="目前没有该考试，请再次确认")
-        testName = testNameD.testName
-        paperName = testNameD.paperName
-        beginTime = testNameD.beginTime
-        endTime = testNameD.endTime
-        diseaseName = testNameD.diseaseName
+        testId = testD.testId
+        testName = testD.testName
+        paperName = testD.paperName
+        beginTime = testD.beginTime
+        endTime = testD.endTime
+        diseaseName = testD.diseaseName
         temp = {}
+        temp["testId"] = testId
         temp["testName"] = testName
         temp["paperName"] = paperName
         temp["beginTime"] = beginTime
@@ -139,11 +144,52 @@ def deleteTest():
         data = []
         data.append(temp)
 
-        db.session.delete(testNameD)
+        db.session.delete(testD)
         db.session.commit()
 
         return ops_renderJSON(msg="删除成功", data=data)
 
+
+@test.route("/update", methods=['POST'])
+def updateTest():
+    if request.method == 'POST':
+        req = request.values
+        testId = req['testId']
+        testName = req['testName']
+        paperName = req['paperName']
+        diseaseName = req['diseaseName']
+        beginTimeStr = req['beginTime']
+        endTimeStr = req['endTime']
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
+
+        testNameD = db.session.query(Test).filter_by(testName=testName).first()
+        if testNameD != None:
+            return ops_renderErrJSON(msg="目前已有该考试，请确认后再试试。")
+        paperNameD = db.session.query(Paper).filter_by(paperName=paperName).first()
+        if paperNameD != None:
+            return ops_renderErrJSON(msg="没有该试卷，请确认后再试试。")
+        else:
+            testU = db.session.query(Test).filter_by(testId=testId).first()
+            testU.testName = testName
+            testU.paperName = paperName
+            testU.diseaseName = diseaseName
+            testU.beginTime = beginTime
+            testU.endTime = endTime
+            db.session.commit()
+
+            # json化data
+            temp = {}
+            temp["testId"] = testId
+            temp["papName"] = testName
+            temp["paperName"] = paperName
+            temp["diseaseName"] = diseaseName
+            temp["beginTime"] = beginTime
+            temp["endTime"] = endTime
+
+            data = []
+            data.append(temp)
+            return ops_renderJSON(msg="修改试卷成功", data=data)
 
 # 根据testId找到PaperID
 @test.route("/paper", methods=['POST'])

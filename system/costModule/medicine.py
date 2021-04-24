@@ -12,7 +12,7 @@ medicine = Blueprint('medicine', __name__, url_prefix='/medicine')
 
 
 @medicine.route("/add", methods=['POST'])
-def addmeMedicine():
+def addMedicine():
     from init import db
     if request.method == "POST":
         req = request.values
@@ -112,7 +112,7 @@ def updateMedicine():
                 return ops_renderJSON(msg="修改药品成功", data=data)
 
 
-# 根据medicineName删除药品
+# 根据medicineId删除药品
 @medicine.route("/delete", methods=['POST'])
 def deleteMedicine():
     from init import db
@@ -152,12 +152,12 @@ def deleteMedicine():
 
 
 @medicine.route("/list", methods=['POST'])
-def listmedicine():
+def listMedicine():
     if request.method == 'POST':
         res = request.values
+        roomName = res['roomName']
         page = res['page']
         per_page = res['per_page']
-        roomName = res['roomName']
         type = res['type']
         if (page == ''):
             page = 1
@@ -167,7 +167,7 @@ def listmedicine():
             per_page = 10
         else:
             per_page = int(per_page)
-        if (len(roomName) == 0):
+        if (roomName == "all"):
             result = Medicine.query.filter_by(type=type).limit(per_page).offset((page - 1) * per_page)
         else:
             result = Medicine.query.filter_by(roomName=roomName, type=type).limit(per_page).offset(
@@ -178,7 +178,8 @@ def listmedicine():
             for i in result:
                 temp["name"] = i.name
                 temp["intro"] = i.intro
-                temp["intro"] = i.intro
+                temp["storage"] = i.storage
+                temp["roomName"] = i.roomName
                 temp['pay'] = i.pay
                 temp["imgUrl"] = i.imgUrl
                 temp["type"] = i.type

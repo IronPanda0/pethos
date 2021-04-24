@@ -53,22 +53,24 @@ def addPaper():
         data = []
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
-    return "添加成功"
 
 @paper.route("/delete", methods=['POST'])
 def deletePaper():
     from init import db
     if request.method == 'POST':
         res = request.values
-        paperName = res['paperName']
+        paperId = res['paperId']
         # diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
-        paperD = db.session.query(Paper).filter(Paper.paperName == paperName).first()
+        paperD = db.session.query(Paper).filter_by(paperId=paperId).first()
         if paperD == None:
             return ops_renderErrJSON(msg="目前没有该试卷，请重新确认")
+        paperId = paperD.paperId
+        paperName = paperD.paperName
         diseaseName = paperD.diseaseName
         sum = paperD.sum
         num = paperD.num
         temp = {}
+        temp["paperId"] = paperId
         temp["paperName"] = paperName
         temp["diseaseName"] = diseaseName
         temp["sum"] = sum
@@ -77,5 +79,60 @@ def deletePaper():
         data.append(temp)
         db.session.delete(paperD)
         db.session.commit()
-
         return ops_renderJSON(msg="删除成功", data=data)
+
+
+@paper.route("/update", methods=['POST'])
+def updatePaper():
+    if request.method == 'POST':
+        req = request.values
+        paperId = req['paperId']
+        paperName = req['paperName']
+        diseaseName = req['diseaseName']
+        paperNameD = db.session.query(Paper).filter_by(paperName=paperName).first()
+        if paperNameD:
+            return ops_renderErrJSON(msg="相同试卷名已经存在，请换一个再试试。")
+        else:
+            paperU = db.session.query(Paper).filter_by(paperId=paperId).first()
+            paperU.paperName = paperName
+            paperU.diseaseName = diseaseName
+            db.session.commit()
+
+            # json化data
+            temp = {}
+            temp["paperId"] = paperId
+            temp["paperName"] = paperName
+            temp["diseaseName"] = diseaseName
+            data = []
+            data.append(temp)
+            return ops_renderJSON(msg="修改试卷成功", data=data)
+
+
+@paper.route("/list", methods=['POST'])
+def listAnimal():
+    if request.method == 'POST':
+        res = request.values
+        page = res['page']
+        per_page = res['per_page']
+        if (page == ''):
+            page = 1
+        else:
+            page = int(page)
+        if (per_page == ''):
+            per_page = 10
+        else:
+            per_page = int(per_page)
+        result = db.session.query(Paper).limit(per_page).offset((page - 1) * per_page)
+        temp = {}
+        data = []
+        if (result != None):
+            for i in result:
+                temp["paperId"] = i.paperId
+                temp["paperName"] = i.paperName
+                temp["diseaseName"] = i.diseaseName
+                temp["sum"] = i.sum
+                temp["num"] = i.num
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有试卷")

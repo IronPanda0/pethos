@@ -11,30 +11,26 @@ from datetime import datetime, time
 
 fee = Blueprint('fee', __name__, url_prefix='/fee')
 
-
-def calFee():
-    from init import db
-    resultCase = db.session.query(Case).all()
-
-    for i in resultCase:
-        total = 0
-        resultCaseMedicine = db.session.query(Casemedicine).filter_by(caseId=i.caseId).all()
-        for j in resultCaseMedicine:
-            curMedicineId = j.medicineId
-            medicineD = db.session.query(Medicine).filter_by(medicineId=curMedicineId).first()
-            total += medicineD.pay
-        model_fee = Fee()
-        model_fee.caseId = i.caseId
-        model_fee.caseName = i.caseName
-        model_fee.count = total
-        db.session.add(model_fee)
-    db.session.commit()
-
-
 @fee.route("/list", methods=['POST'])
 def listFee():
     if request.method == "POST":
-        calFee()
+        from init import db
+        resultCase = db.session.query(Case).all()
+        tempMedicine = {}
+
+        for i in resultCase:
+            total = 0
+            resultCaseMedicine = db.session.query(Casemedicine).filter_by(caseId=i.caseId).all()
+            for j in resultCaseMedicine:
+                curMedicineId = j.medicineId
+                medicineD = db.session.query(Medicine).filter_by(medicineId=curMedicineId).first()
+                total += medicineD.pay
+            model_fee = Fee()
+            model_fee.caseId = i.caseId
+            model_fee.caseName = i.caseName
+            model_fee.count = total
+            db.session.add(model_fee)
+        db.session.commit()
         res = request.values
         page = res['page']
         per_page = res['per_page']

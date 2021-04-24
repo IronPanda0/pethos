@@ -28,7 +28,7 @@ CREATE TABLE `animal` (
   `breathe` int(11) DEFAULT NULL COMMENT '呼吸',
   `heartRate` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '心率',
   PRIMARY KEY (`animalId`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Data for the table `animal` */
 
@@ -63,12 +63,15 @@ CREATE TABLE `case` (
   `caseInfo` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '文字简介',
   `videoUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '视频信息',
   `imageUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片信息',
+  `processUrl1` varchar(100) DEFAULT NULL COMMENT '流程图片信息1',
+  `processUrl2` varchar(100) DEFAULT NULL COMMENT '流程图片信息2',
+  `processUrl3` varchar(100) DEFAULT NULL COMMENT '流程图片信息3',
   PRIMARY KEY (`caseId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 /*Data for the table `case` */
 
-insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`) values (21,'小李的案例','小李','炎症','发炎','test','testtest'),(23,'小明的案例','小明','狂犬病','怕水','test','testtest');
+insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`) values (21,'小李的案例','小李','炎症','发炎','test','testtest',NULL,NULL,NULL),(23,'小明的案例','小明','狂犬病','怕水','test','testtest',NULL,NULL,NULL);
 
 /*Table structure for table `caseassay` */
 
@@ -134,11 +137,11 @@ CREATE TABLE `disease` (
   `diseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '病种名称',
   `categoryName` varchar(50) NOT NULL COMMENT '分类名称',
   PRIMARY KEY (`diseaseId`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 /*Data for the table `disease` */
 
-insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (5,'狂犬病1','传染病'),(7,'狂犬病3','传染病'),(8,'狂犬病4','传染病'),(9,'狂犬病5','传染病'),(10,'狂犬病6','传染病'),(11,'狂犬病7','传染病'),(12,'狂犬病8','传染病'),(13,'狂犬病9','传染病'),(14,'狂犬病10','传染病'),(15,'狂犬病11','传染病'),(16,'狂犬病12','传染病'),(17,'胃炎','炎症'),(18,'狂犬病','传染病');
+insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (5,'狂犬病1','传染病'),(7,'狂犬病3','传染病'),(8,'狂犬病4','传染病'),(9,'狂犬病5','传染病'),(10,'狂犬病6','传染病'),(11,'狂犬病7','传染病'),(12,'狂犬病8','传染病'),(13,'狂犬病9','传染病'),(14,'狂犬病10','传染病'),(15,'狂犬病11','传染病'),(16,'狂犬病12','传染病'),(17,'胃炎','炎症'),(18,'狂犬病','传染病'),(19,'传染病','传染病');
 
 /*Table structure for table `fee` */
 
@@ -150,11 +153,11 @@ CREATE TABLE `fee` (
   `count` int(10) unsigned NOT NULL COMMENT '全部费用',
   `caseName` varchar(50) NOT NULL COMMENT '病例名称',
   PRIMARY KEY (`feeId`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 /*Data for the table `fee` */
 
-insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (1,21,30,'小李的案例'),(2,23,0,'小明的案例');
+insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (1,21,30,'小李的案例'),(2,23,0,'小明的案例'),(3,21,30,'小李的案例'),(4,23,0,'小明的案例');
 
 /*Table structure for table `item` */
 
@@ -185,11 +188,11 @@ CREATE TABLE `medicine` (
   `roomName` varchar(50) DEFAULT NULL COMMENT '科室名称',
   `type` varchar(20) DEFAULT NULL COMMENT '药品种类',
   PRIMARY KEY (`medicineId`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 /*Data for the table `medicine` */
 
-insert  into `medicine`(`medicineId`,`name`,`pay`,`storage`,`intro`,`imgUrl`,`roomName`,`type`) values (17,'疫苗2',10,10,'简介','test','科室1','疫苗'),(18,'药品1',10,10,'简介','test','科室2','药品'),(19,'药品2',10,10,'简介','test','科室2','药品');
+insert  into `medicine`(`medicineId`,`name`,`pay`,`storage`,`intro`,`imgUrl`,`roomName`,`type`) values (17,'最新药品',10,5,'药品简介','test','科室1','药品'),(18,'药品1',10,10,'简介','test','科室2','药品'),(19,'药品2',10,10,'简介','test','科室2','药品'),(20,'药品3',10,10,'简介','test','科室1','药品');
 
 /*Table structure for table `medicineroom` */
 
@@ -217,11 +220,11 @@ CREATE TABLE `paper` (
   `num` int(11) DEFAULT NULL COMMENT '试卷题数',
   `diseaseName` varchar(50) DEFAULT NULL COMMENT '所属病种名称',
   PRIMARY KEY (`paperId`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paper` */
 
-insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病');
+insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病'),(47,'入学考试试卷修改',30,3,'狂犬病');
 
 /*Table structure for table `paperquestion` */
 
@@ -232,11 +235,11 @@ CREATE TABLE `paperquestion` (
   `paperId` int(11) DEFAULT NULL COMMENT '试卷ID',
   `questionId` int(11) DEFAULT NULL COMMENT '问题ID',
   PRIMARY KEY (`paperQuestionId`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paperquestion` */
 
-insert  into `paperquestion`(`paperQuestionId`,`paperId`,`questionId`) values (1,15,1),(2,15,3),(3,15,4),(4,38,1),(5,38,3),(6,38,4),(7,39,1),(8,39,3),(9,39,4),(10,40,1),(11,40,3),(12,40,4),(13,41,1),(14,41,3),(15,41,4),(16,42,1),(17,42,3),(18,42,4),(19,45,1),(20,45,4),(21,45,3);
+insert  into `paperquestion`(`paperQuestionId`,`paperId`,`questionId`) values (1,15,1),(2,15,3),(3,15,4),(4,38,1),(5,38,3),(6,38,4),(7,39,1),(8,39,3),(9,39,4),(10,40,1),(11,40,3),(12,40,4),(13,41,1),(14,41,3),(15,41,4),(16,42,1),(17,42,3),(18,42,4),(19,45,1),(20,45,4),(21,45,3),(22,46,9),(23,46,10),(24,46,11),(25,47,9),(26,47,10),(27,47,11);
 
 /*Table structure for table `question` */
 
@@ -246,7 +249,6 @@ CREATE TABLE `question` (
   `questionId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '问题ID',
   `questionInfo` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '题干',
   `answer` int(11) DEFAULT NULL COMMENT '答案',
-  `diseaseId` int(11) DEFAULT NULL COMMENT '所属病种ID',
   `diseaseName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '所属病种名称',
   `score` int(11) DEFAULT NULL COMMENT '分值',
   `choiceA` varchar(50) DEFAULT NULL COMMENT '选项A',
@@ -254,11 +256,11 @@ CREATE TABLE `question` (
   `choiceC` varchar(50) DEFAULT NULL COMMENT '选项C',
   `choiceD` varchar(50) DEFAULT NULL COMMENT '选项D',
   PRIMARY KEY (`questionId`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 /*Data for the table `question` */
 
-insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseId`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,1,'狂犬病',5,'选A','选B','选C','选D'),(3,'题干题干',1,NULL,'狂犬病',5,'选项','选项','选项','选项'),(4,'题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(5,'题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(6,'题干题干题干题干题干',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(7,'感染病题干',1,NULL,'感染病',5,'选项',' 选项','选项','选项'),(8,'凑数生成试卷1',1,NULL,'狂犬病',5,'选项','选项','选项','选项'),(9,'凑数2',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(10,'凑数3',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(11,'凑数4',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(12,'凑数5',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(13,'凑数6',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(14,'狂犬病第二页',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(15,'狂犬病第二页1',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(16,'狂犬病第二页2',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(17,'狂犬病第二页3',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(18,'狂犬病第二页4',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(19,'狂犬病第二页5',1,NULL,'狂犬病',10,'选项','选项','选项','选项'),(20,'狂犬病第二页6',1,NULL,'狂犬病',10,'选项','选项','选项','选项');
+insert  into `question`(`questionId`,`questionInfo`,`answer`,`diseaseName`,`score`,`choiceA`,`choiceB`,`choiceC`,`choiceD`) values (1,'题目1',1,'狂犬病',5,'选A','选B','选C','选D'),(3,'题干题干',1,'狂犬病',5,'选项','选项','选项','选项'),(4,'题干题干题干',1,'狂犬病',10,'选项','选项','选项','选项'),(5,'题干题干题干题干',1,'狂犬病',10,'选项','选项','选项','选项'),(6,'题干题干题干题干题干',1,'狂犬病',10,'选项','选项','选项','选项'),(7,'感染病题干',1,'感染病',5,'选项',' 选项','选项','选项'),(8,'凑数生成试卷1',1,'狂犬病',5,'选项','选项','选项','选项'),(9,'凑数2',1,'狂犬病',10,'选项','选项','选项','选项'),(10,'凑数3',1,'狂犬病',10,'选项','选项','选项','选项'),(11,'凑数4',1,'狂犬病',10,'选项','选项','选项','选项'),(12,'凑数5',1,'狂犬病',10,'选项','选项','选项','选项'),(13,'凑数6',1,'狂犬病',10,'选项','选项','选项','选项'),(14,'狂犬病第二页',1,'狂犬病',10,'选项','选项','选项','选项'),(15,'狂犬病第二页1',1,'狂犬病',10,'选项','选项','选项','选项'),(16,'狂犬病第二页2',1,'狂犬病',10,'选项','选项','选项','选项'),(17,'狂犬病第二页3',1,'狂犬病',10,'选项','选项','选项','选项'),(18,'狂犬病第二页4',1,'狂犬病',10,'选项','选项','选项','选项'),(19,'狂犬病第二页5',1,'狂犬病',10,'选项','选项','选项','选项');
 
 /*Table structure for table `room` */
 
@@ -317,7 +319,7 @@ CREATE TABLE `test` (
   `endTime` datetime DEFAULT NULL COMMENT '结束时间',
   `diseaseName` varchar(50) DEFAULT NULL COMMENT '相关病种',
   PRIMARY KEY (`testId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Data for the table `test` */
 
@@ -328,7 +330,7 @@ insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`disea
 DROP TABLE IF EXISTS `testpaper`;
 
 CREATE TABLE `testpaper` (
-  `testPaperId` int(11) NOT NULL AUTO_INCREMENT,
+  `testPaperId` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `testId` int(11) DEFAULT NULL,
   `paperId` int(11) DEFAULT NULL,
   PRIMARY KEY (`testPaperId`)

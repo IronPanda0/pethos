@@ -23,6 +23,9 @@ def addCase():
         caseInfo = req['caseInfo']
         videoUrl = req['videoUrl']
         imageUrl = req['imageUrl']
+        processUrl1 = req['processUrl1']
+        processUrl2 = req['processUrl2']
+        processUrl3 = req['processUrl3']
         caseNameD = Case.query.filter_by(caseName=caseName).first()
         if caseNameD:
             return ops_renderErrJSON(msg="相同题干已存在，请再换一个试试")
@@ -46,6 +49,9 @@ def addCase():
         temp["animalName"] = animalName
         temp["videoUrl"] = videoUrl
         temp["imageUrl"] = imageUrl
+        temp["processUrl1"] = processUrl1
+        temp["processUrl2"] = processUrl2
+        temp["processUrl3"] = processUrl3
         data = []
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
@@ -56,14 +62,18 @@ def addCase():
 def listCase():
     if request.method == 'POST':
         res = request.values
-        page = int(res['page'])
-        per_page = int(res['per_page'])
+        page = res['page']
+        per_page = res['per_page']
         diseaseName = res['diseaseName']
-        if (page == None):
+        if (page == ''):
             page = 1
-        if (per_page == None):
+        else:
+            page = int(page)
+        if (per_page == ''):
             per_page = 10
-        if (len(diseaseName) == 0):
+        else:
+            per_page = int(per_page)
+        if (diseaseName == "all"):
             result = Case.query.limit(per_page).offset((page - 1) * per_page)
         else:
             result = Case.query.filter_by(diseaseName=diseaseName).limit(per_page).offset((page - 1) * per_page)
@@ -78,6 +88,9 @@ def listCase():
                 temp["animalName"] = i.animalName
                 temp["videoUrl"] = i.videoUrl
                 temp["imageUrl"] = i.imageUrl
+                temp["processUrl1"] = i.processUrl1
+                temp["processUrl2"] = i.processUrl2
+                temp["processUrl3"] = i.processUrl3
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
@@ -99,6 +112,9 @@ def deletecase():
         animalName = caseNameD.animalName
         videoUrl = caseNameD.videoUrl
         imageUrl = caseNameD.imageUrl
+        processUrl1 = caseNameD.processUrl1
+        processUrl2 = caseNameD.processUrl2
+        processUrl3 = caseNameD.processUrl3
         temp = {}
         temp["caseName"] = caseName
         temp["caseInfo"] = caseInfo
@@ -106,6 +122,9 @@ def deletecase():
         temp["animalName"] = animalName
         temp["videoUrl"] = videoUrl
         temp["imageUrl"] = imageUrl
+        temp["processUrl1"] = processUrl1
+        temp["processUrl2"] = processUrl2
+        temp["processUrl3"] = processUrl3
         data = []
         data.append(temp)
 
