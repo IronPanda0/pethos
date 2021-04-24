@@ -15,23 +15,6 @@ fee = Blueprint('fee', __name__, url_prefix='/fee')
 def listFee():
     if request.method == "POST":
         from init import db
-        resultCase = db.session.query(Case).all()
-        tempMedicine = {}
-        tempCount = []
-        for i in resultCase:
-            total = 0
-            resultCaseMedicine = db.session.query(Casemedicine).filter_by(caseId=i.caseId).all()
-            for j in resultCaseMedicine:
-                curMedicineId = j.medicineId
-                medicineD = db.session.query(Medicine).filter_by(medicineId=curMedicineId).first()
-                # tempMedicine["name"] =
-                total += medicineD.pay
-            model_fee = Fee()
-            model_fee.caseId = i.caseId
-            model_fee.caseName = i.caseName
-            model_fee.count = total
-            db.session.add(model_fee)
-        db.session.commit()
         res = request.values
         page = res['page']
         per_page = res['per_page']
@@ -43,15 +26,78 @@ def listFee():
             per_page = 10
         else:
             per_page = int(per_page)
+
+        allUsedMedicine = {}
+        resultCase = db.session.query(Case).all()
+        for i in resultCase:
+            caseName = i.caseName
+            total = 0
+            medicineStr = ''
+            medicineList = []
+            resultCaseMedicine = db.session.query(Casemedicine).filter_by(caseId=i.caseId).all()
+            for j in resultCaseMedicine:
+                curMedicineId = j.medicineId
+                medicineD = db.session.query(Medicine).filter_by(medicineId=curMedicineId).first()
+                medicineName = medicineD.name
+                medicineList.append(medicineName)
+                total += medicineD.pay
+                medicineStr = medicineStr + ' ' + medicineName
+            # 生成该病例使用过的药品名称键list
+            medicineKeys = []
+            for i1 in medicineList:
+                if i1 not in medicineKeys:
+                    medicineKeys.append(i1)
+            medicineCount = {}
+            for j1 in medicineKeys:
+                medicineCount[j1] = medicineStr.count(j1)
+            allUsedMedicine["%s" % caseName] = medicineCount
+            model_fee = Fee()
+            model_fee.caseId = i.caseId
+            model_fee.caseName = i.caseName
+            model_fee.count = total
+            db.session.add(model_fee)
+        db.session.commit()
+
         result = Fee.query.limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []
         if (result != None):
-            for i in result:
-                temp["caseId"] = i.caseId
-                temp["caseName"] = i.caseName
-                temp["count"] = i.count
+            for k in result:
+                temp["caseId"] = k.caseId
+                temp["caseName"] = k.caseName
+                temp["count"] = k.count
+                temp["usedMedicine"] = allUsedMedicine["%s" % k.caseName]
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有费用")
+
+# def calFee():
+#     from init import db
+#     resultCase = db.session.query(Case).all()
+#     for i in resultCase:
+#         total = 0
+#         medicineStr = ''
+#         medicineList = []
+#         resultCaseMedicine = db.session.query(Casemedicine).filter_by(caseId=i.caseId).all()
+#         for j in resultCaseMedicine:
+#             curMedicineId = j.medicineId
+#             medicineD = db.session.query(Medicine).filter_by(medicineId=curMedicineId).first()
+#             medicineName = medicineD.name
+#             medicineList.append(medicineName)
+#             total += medicineD.pay
+#             medicineStr = medicineStr + ' ' + medicineName
+#         # 生成该病例使用过的药品名称键list
+#         medicineKeys = []
+#         for i in medicineList:
+#             if i not in medicineKeys:
+#                 medicineKeys.append(i)
+#         medicineCount = {}
+#         for j in medicineKeys:
+#             medicineCount[j] = medicineStr.count(j)
+#         model_fee = Fee()
+#         model_fee.caseId = i.caseId
+#         model_fee.caseName = i.caseName
+#         model_fee.count = total
+#         db.session.add(model_fee)
+#     db.session.commit()
