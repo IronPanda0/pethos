@@ -153,11 +153,11 @@ CREATE TABLE `fee` (
   `count` int(10) unsigned NOT NULL COMMENT '全部费用',
   `caseName` varchar(50) NOT NULL COMMENT '病例名称',
   PRIMARY KEY (`feeId`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Data for the table `fee` */
 
-insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (1,21,30,'小李的案例'),(2,23,0,'小明的案例'),(3,21,30,'小李的案例'),(4,23,0,'小明的案例');
+insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (1,21,30,'小李的案例'),(2,23,0,'小明的案例'),(3,21,30,'小李的案例'),(4,23,0,'小明的案例'),(5,21,30,'小李的案例'),(6,23,0,'小明的案例');
 
 /*Table structure for table `item` */
 
