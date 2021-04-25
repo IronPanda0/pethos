@@ -85,7 +85,7 @@ def changepwd():
         "token": token
     } if userId and token is not None else None
     auth = authCheck(data)
-    auth = True
+    # auth = True
     if not auth:
         app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
         return ops_renderIllegalJSON()
@@ -123,7 +123,7 @@ def changeinfo():
         "token": token
     } if userId and token is not None else None
     auth = authCheck(data)
-    auth = True
+    # auth = True
     if not auth:
         app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
         return ops_renderIllegalJSON()
