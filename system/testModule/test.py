@@ -264,7 +264,7 @@ def questionDetail(questionIdArray):
 
 
 # 根据前端返回的数据计算分数
-@test.route("/score")
+@test.route("/score",methods=["post"])
 def countScore():
     if request.method == 'POST':
         res = request.values
