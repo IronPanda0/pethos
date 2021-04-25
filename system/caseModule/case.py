@@ -96,10 +96,47 @@ def listCase():
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
-            return ops_renderErrJSON(msg="查询失败，目前没有分类")
+            return ops_renderErrJSON(msg="查询失败，目前没有病例")
 
 
-# 根据caseName删除病例
+@case.route("/fuzzy", methods=['POST'])
+def fuzzySearchCase():
+    if request.method == 'POST':
+        res = request.values
+        page = res['page']
+        per_page = res['per_page']
+        caseName = res['caseName']
+        if (page == ''):
+            page = 1
+        else:
+            page = int(page)
+        if (per_page == ''):
+            per_page = 10
+        else:
+            per_page = int(per_page)
+        result = db.session.query(Case).filter(Case.caseName.like('%%%%%s%%%%' % caseName)).limit(
+            per_page).offset((page - 1) * per_page)
+        temp = {}
+        data = []
+        if (result != None):
+            for i in result:
+                temp["caseName"] = i.caseName
+                temp["caseName"] = i.caseName
+                temp["caseInfo"] = i.caseInfo
+                temp["diseaseName"] = i.diseaseName
+                temp["animalName"] = i.animalName
+                temp["videoUrl"] = i.videoUrl
+                temp["imageUrl"] = i.imageUrl
+                temp["processUrl1"] = i.processUrl1
+                temp["processUrl2"] = i.processUrl2
+                temp["processUrl3"] = i.processUrl3
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有病例")
+
+
+# 根据caseId删除病例
 @case.route("/delete", methods=['POST'])
 def deletecase():
     from init import db

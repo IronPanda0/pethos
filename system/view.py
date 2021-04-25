@@ -3,8 +3,12 @@ from flask_cors import CORS
 from common.DataHelper import *
 from init import db, app
 from model.user import User
+from model.disease import Disease
+from model.case import Case
+from model.test import Test
 from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
 from common.userAuth import *
+from sqlalchemy.sql import func
 import sha3
 
 CORS(app, supports_credentials=True)
@@ -297,3 +301,20 @@ def ifandfor():
     context['MARRY'] = {"name": "MARRY", "password": "123456"}
     # 传进去一个字典，引号中的name对应前端变量名
     return render_template("index.html", **context)
+
+
+# created by lyb
+# 返回病种、病例、测试总数
+@welcome.route("/count", methods=["POST"])
+def count():
+    if request.method == 'POST':
+        diseaseCount = db.session.query(func.count(Disease.diseaseId)).scalar()
+        caseCount = db.session.query(func.count(Case.caseId)).scalar()
+        testCount = db.session.query(func.count(Test.testId)).scalar()
+        temp = {}
+        data = []
+        temp['diseaseCount'] = diseaseCount
+        temp['caseCount'] = caseCount
+        temp['testCount'] = testCount
+        data.append(temp)
+        return ops_renderJSON(msg="查询成功", data=data)
