@@ -13,6 +13,7 @@ from system.roomModule.room import room
 from system.manager.managerCon import manager
 from system.costModule.fee import fee
 from system.costModule.medicine import medicine
+from system.caseModule.hospital import hospital
 # from flask_debugtoolbar import DebugToolbarExtension
 from system.instance.view import instance
 # from flask_debugtoolbar import DebugToolbarExtension
@@ -42,10 +43,12 @@ app.register_blueprint(paper)
 app.register_blueprint(userRole)
 app.register_blueprint(room)
 app.register_blueprint(medicine)
+app.register_blueprint(hospital)
+app.register_blueprint(fee)
+
 # created by lzy
 app.register_blueprint(map)
 app.register_blueprint(role)
 
-app.register_blueprint(fee)
 app.add_template_global(UrlManager.buildStaticUrl, 'buildStaticUrl')
 app.add_template_global(UrlManager.buildUrl, 'buildUrl')

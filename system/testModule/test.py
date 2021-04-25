@@ -25,8 +25,8 @@ def addTest():
         diseaseName = req['diseaseName']
         beginTimeStr = req['beginTime']
         endTimeStr = req['endTime']
-        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
-        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
         # 略过数据合法性检测
         testNameD = Test.query.filter_by(testName=testName).first()
         if (testNameD):
@@ -186,8 +186,8 @@ def updateTest():
         diseaseName = req['diseaseName']
         beginTimeStr = req['beginTime']
         endTimeStr = req['endTime']
-        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
-        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
 
         testNameD = db.session.query(Test).filter_by(testName=testName).first()
         if testNameD != None:
