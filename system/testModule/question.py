@@ -67,7 +67,7 @@ def listQuestion():
             page = 1
         if (per_page == None):
             per_page = 10
-        if (len(diseaseName) == 0):
+        if (diseaseName == "all"):
             result = Question.query.limit(per_page).offset((page - 1) * per_page)
         else:
             result = Question.query.filter_by(diseaseName=diseaseName).limit(per_page).offset((page - 1) * per_page)

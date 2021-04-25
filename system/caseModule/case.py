@@ -32,17 +32,19 @@ def addCase():
         # 注册写入数据库
         model_case = Case()
         model_case.caseName = caseName
-        model_case.caseName = caseName
         model_case.caseInfo = caseInfo
         model_case.diseaseName = diseaseName
         model_case.animalName = animalName
         model_case.videoUrl = videoUrl
         model_case.imageUrl = imageUrl
+        model_case.processUrl1 = processUrl1
+        model_case.processUrl2 = processUrl2
+        model_case.processUrl3 = processUrl3
+
         db.session.add(model_case)
         db.session.commit()
         # json化data
         temp = {}
-        temp["caseName"] = caseName
         temp["caseName"] = caseName
         temp["caseInfo"] = caseInfo
         temp["diseaseName"] = diseaseName
@@ -103,18 +105,19 @@ def deletecase():
     from init import db
     if request.method == 'POST':
         res = request.values
-        caseName = res['caseName']
-        caseNameD = db.session.query(Case).filter(Case.caseName == caseName).first()
-        if caseNameD == None:
+        caseId = res['caseId']
+        caseD = db.session.query(Case).filter_by(caseId=caseId).first()
+        if caseD == None:
             return ops_renderErrJSON(msg="目前没有该病例，请再次确认")
-        caseInfo = caseNameD.caseInfo
-        diseaseName = caseNameD.diseaseName
-        animalName = caseNameD.animalName
-        videoUrl = caseNameD.videoUrl
-        imageUrl = caseNameD.imageUrl
-        processUrl1 = caseNameD.processUrl1
-        processUrl2 = caseNameD.processUrl2
-        processUrl3 = caseNameD.processUrl3
+        caseInfo = caseD.caseInfo
+        caseName = caseD.caseName
+        diseaseName = caseD.diseaseName
+        animalName = caseD.animalName
+        videoUrl = caseD.videoUrl
+        imageUrl = caseD.imageUrl
+        processUrl1 = caseD.processUrl1
+        processUrl2 = caseD.processUrl2
+        processUrl3 = caseD.processUrl3
         temp = {}
         temp["caseName"] = caseName
         temp["caseInfo"] = caseInfo
@@ -128,7 +131,7 @@ def deletecase():
         data = []
         data.append(temp)
 
-        db.session.delete(caseNameD)
+        db.session.delete(caseD)
         db.session.commit()
 
         return ops_renderJSON(msg="删除成功", data=data)

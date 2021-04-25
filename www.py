@@ -12,6 +12,7 @@ from system.userRole import userRole
 from system.roomModule.room import room
 from system.manager.managerCon import manager
 from system.costModule.fee import fee
+from system.costModule.medicine import medicine
 # from flask_debugtoolbar import DebugToolbarExtension
 from system.instance.view import instance
 # from flask_debugtoolbar import DebugToolbarExtension
@@ -40,6 +41,7 @@ app.register_blueprint(test)
 app.register_blueprint(paper)
 app.register_blueprint(userRole)
 app.register_blueprint(room)
+app.register_blueprint(medicine)
 # created by lzy
 app.register_blueprint(map)
 app.register_blueprint(role)

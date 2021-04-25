@@ -33,7 +33,6 @@ def addPaper():
         paperScore = 0
         for i in questionIdList:
             questionD = Question.query.filter_by(questionId=i).first()
-            print(questionD.questionInfo)
             scoreD = questionD.score
             model_paperQuestion = Paperquestion()
             model_paperQuestion.questionId = i
