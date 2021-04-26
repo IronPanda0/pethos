@@ -155,33 +155,21 @@ def searchTest():
     if request.method == 'POST':
         res = request.values
         testName = res['testName']
-        page = res['page']
-        per_page = res['per_page']
-        if (page == ''):
-            page = 1
+        result = Test.query.filter_by(testName=testName).first()
+        temp = {}
+        data = []
+        if (result != None):
+            for i in result:
+                temp["testId"] = i.testId
+                temp["testName"] = i.testName
+                temp["paperName"] = i.paperName
+                temp["beginTime"] = i.beginTime
+                temp["endTime"] = i.endTime
+                temp["diseaseName"] = i.diseaseName
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
         else:
-            page = int(page)
-        if (per_page == ''):
-            per_page = 10
-        else:
-            per_page = int(per_page)
-        if (len(testName) != 0):
-            result = Test.query.filter_by(testName=testName).limit(per_page).offset((page - 1) * per_page)
-            temp = {}
-            data = []
-            if (result != None):
-                for i in result:
-                    temp["testId"] = i.testId
-                    temp["testName"] = i.testName
-                    temp["paperName"] = i.paperName
-                    temp["beginTime"] = i.beginTime
-                    temp["endTime"] = i.endTime
-                    temp["diseaseName"] = i.diseaseName
-                    data.append(temp.copy())
-                return ops_renderJSON(msg="查询成功", data=data)
-            else:
-                return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
-        return ops_renderJSON(msg="查询成功")
+            return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
 
 
 # 根据testName删除考试

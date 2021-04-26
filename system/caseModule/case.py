@@ -26,6 +26,9 @@ def addCase():
         processUrl1 = req['processUrl1']
         processUrl2 = req['processUrl2']
         processUrl3 = req['processUrl3']
+        info1 = req['info1']
+        info2 = req['info2']
+        info3 = req['info3']
         caseNameD = Case.query.filter_by(caseName=caseName).first()
         if caseNameD:
             return ops_renderErrJSON(msg="相同题干已存在，请再换一个试试")
@@ -40,7 +43,9 @@ def addCase():
         model_case.processUrl1 = processUrl1
         model_case.processUrl2 = processUrl2
         model_case.processUrl3 = processUrl3
-
+        model_case.info1 = info1
+        model_case.info2 = info2
+        model_case.info3 = info3
         db.session.add(model_case)
         db.session.commit()
         # json化data
@@ -54,6 +59,10 @@ def addCase():
         temp["processUrl1"] = processUrl1
         temp["processUrl2"] = processUrl2
         temp["processUrl3"] = processUrl3
+        temp["info1"] = info1
+        temp["info2"] = info2
+        temp["info3"] = info3
+
         data = []
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
@@ -83,6 +92,7 @@ def listCase():
         data = []
         if (result != None):
             for i in result:
+                temp["caseId"] = i.caseId
                 temp["caseName"] = i.caseName
                 temp["caseName"] = i.caseName
                 temp["caseInfo"] = i.caseInfo
@@ -93,6 +103,9 @@ def listCase():
                 temp["processUrl1"] = i.processUrl1
                 temp["processUrl2"] = i.processUrl2
                 temp["processUrl3"] = i.processUrl3
+                temp["info1"] = i.info1
+                temp["info2"] = i.info2
+                temp["info3"] = i.info3
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
@@ -120,6 +133,7 @@ def fuzzySearchCase():
         data = []
         if (result != None):
             for i in result:
+                temp["caseId"] = i.caseId
                 temp["caseName"] = i.caseName
                 temp["caseName"] = i.caseName
                 temp["caseInfo"] = i.caseInfo
@@ -130,6 +144,9 @@ def fuzzySearchCase():
                 temp["processUrl1"] = i.processUrl1
                 temp["processUrl2"] = i.processUrl2
                 temp["processUrl3"] = i.processUrl3
+                temp["info1"] = i.info1
+                temp["info2"] = i.info2
+                temp["info3"] = i.info3
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
@@ -155,7 +172,11 @@ def deletecase():
         processUrl1 = caseD.processUrl1
         processUrl2 = caseD.processUrl2
         processUrl3 = caseD.processUrl3
+        info1 = caseD.info1
+        info2 = caseD.info2
+        info3 = caseD.info3
         temp = {}
+        temp["caseId"] = caseId
         temp["caseName"] = caseName
         temp["caseInfo"] = caseInfo
         temp["diseaseName"] = diseaseName
@@ -165,6 +186,9 @@ def deletecase():
         temp["processUrl1"] = processUrl1
         temp["processUrl2"] = processUrl2
         temp["processUrl3"] = processUrl3
+        temp["info1"] = info1
+        temp["info2"] = info2
+        temp["info3"] = info3
         data = []
         data.append(temp)
 

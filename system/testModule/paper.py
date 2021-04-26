@@ -16,8 +16,8 @@ def addPaper():
     if request.method == 'POST':
         req = request.values
         # questionIdList = [1,3,4]
-        questionIdList = req.getlist('IdList')
-        questionIdList = list(map(int, questionIdList))
+        questionIdList = req.getlist('IdList[]')
+        # questionIdList = list(map(int, questionIdList))
         paperName = req['paperName']
         diseaseName = req['diseaseName']
         paperD = Paper.query.filter_by(paperName=paperName).first()

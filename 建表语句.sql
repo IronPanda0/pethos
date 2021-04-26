@@ -49,12 +49,15 @@ CREATE TABLE `case` (
   `processUrl1` varchar(100) DEFAULT NULL COMMENT '流程图片信息1',
   `processUrl2` varchar(100) DEFAULT NULL COMMENT '流程图片信息2',
   `processUrl3` varchar(100) DEFAULT NULL COMMENT '流程图片信息3',
+  `info1` varchar(100) DEFAULT NULL COMMENT '流程简介1',
+  `info2` varchar(100) DEFAULT NULL COMMENT '流程简介2',
+  `info3` varchar(100) DEFAULT NULL COMMENT '流程简介3',
   PRIMARY KEY (`caseId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 /*Data for the table `case` */
 
-insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`) values (21,'小李的案例','小李','炎症','发炎','test','testtest',NULL,NULL,NULL),(23,'小明的案例','小明','狂犬病','怕水','test','testtest',NULL,NULL,NULL);
+insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`,`info1`,`info2`,`info3`) values (21,'小李的案例','小李','炎症','发炎','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL),(23,'小明的案例','小明','狂犬病','怕水','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `casemedicine` */
 
@@ -193,11 +196,11 @@ CREATE TABLE `paper` (
   `num` int(11) DEFAULT NULL COMMENT '试卷题数',
   `diseaseName` varchar(50) DEFAULT NULL COMMENT '所属病种名称',
   PRIMARY KEY (`paperId`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paper` */
 
-insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病'),(47,'入学考试试卷修改修改',30,3,'狂犬病'),(48,'入学考试试卷',30,3,'狂犬病'),(49,'23',30,3,'狂犬病');
+insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病'),(47,'入学考试试卷修改修改',30,3,'狂犬病'),(48,'入学考试试卷',30,3,'狂犬病'),(49,'23',30,3,'狂犬病'),(50,'测试试卷',30,3,'狂犬病'),(51,'测试试卷11',30,3,'狂犬病'),(52,'测试试卷11111',0,0,'狂犬病'),(53,'测试试卷1111',30,3,'狂犬病');
 
 /*Table structure for table `paperquestion` */
 
@@ -208,11 +211,11 @@ CREATE TABLE `paperquestion` (
   `paperId` int(11) DEFAULT NULL COMMENT '试卷ID',
   `questionId` int(11) DEFAULT NULL COMMENT '问题ID',
   PRIMARY KEY (`paperQuestionId`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paperquestion` */
 
-insert  into `paperquestion`(`paperQuestionId`,`paperId`,`questionId`) values (1,15,1),(2,15,3),(3,15,4),(4,38,1),(5,38,3),(6,38,4),(7,39,1),(8,39,3),(9,39,4),(10,40,1),(11,40,3),(12,40,4),(13,41,1),(14,41,3),(15,41,4),(16,42,1),(17,42,3),(18,42,4),(19,45,1),(20,45,4),(21,45,3),(22,46,9),(23,46,10),(24,46,11),(25,47,9),(26,47,10),(27,47,11),(28,48,9),(29,48,10),(30,48,11),(31,49,14),(32,49,15),(33,49,16);
+insert  into `paperquestion`(`paperQuestionId`,`paperId`,`questionId`) values (1,15,1),(2,15,3),(3,15,4),(4,38,1),(5,38,3),(6,38,4),(7,39,1),(8,39,3),(9,39,4),(10,40,1),(11,40,3),(12,40,4),(13,41,1),(14,41,3),(15,41,4),(16,42,1),(17,42,3),(18,42,4),(19,45,1),(20,45,4),(21,45,3),(22,46,9),(23,46,10),(24,46,11),(25,47,9),(26,47,10),(27,47,11),(28,48,9),(29,48,10),(30,48,11),(31,49,14),(32,49,15),(33,49,16),(34,50,14),(35,50,15),(36,50,16),(37,51,14),(38,51,15),(39,51,16),(40,53,14),(41,53,15),(42,53,16);
 
 /*Table structure for table `question` */
 
