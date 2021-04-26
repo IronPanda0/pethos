@@ -57,7 +57,7 @@ CREATE TABLE `case` (
 
 /*Data for the table `case` */
 
-insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`,`info1`,`info2`,`info3`) values (21,'小李的案例','小李','炎症','发炎','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL),(23,'小明的案例','小明','狂犬病','怕水','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`,`info1`,`info2`,`info3`) values (1,'小李的案例','小李','犬瘟修改','吃不下饭','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL),(2,'小明的案例','小明','发热','体温升高','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `casemedicine` */
 
@@ -86,7 +86,7 @@ CREATE TABLE `category` (
 
 /*Data for the table `category` */
 
-insert  into `category`(`categoryID`,`categoryName`) values (1,'传染病'),(20,'呼吸道疾病');
+insert  into `category`(`categoryID`,`categoryName`) values (1,'传染病'),(2,'内科病'),(3,'外科病');
 
 /*Table structure for table `disease` */
 
@@ -101,7 +101,7 @@ CREATE TABLE `disease` (
 
 /*Data for the table `disease` */
 
-insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (5,'狂犬病1','传染病'),(7,'狂犬病3','传染病'),(8,'狂犬病4','传染病'),(9,'狂犬病5','传染病'),(10,'狂犬病6','传染病'),(11,'狂犬病7','传染病'),(12,'狂犬病8','传染病'),(13,'狂犬病9','传染病'),(14,'狂犬病10','传染病'),(15,'狂犬病11','传染病'),(16,'狂犬病12','传染病'),(17,'胃炎','炎症'),(18,'狂犬病','传染病'),(19,'传染病','传染病');
+insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (1,'犬瘟修改','传染病'),(2,'细小','传染病'),(3,'发热','内科病'),(4,'咳嗽','内科病'),(5,'呕吐','内科病'),(6,'腹泻','内科病'),(7,'骨折','外科病'),(8,'外伤','外科病');
 
 /*Table structure for table `fee` */
 
@@ -200,8 +200,6 @@ CREATE TABLE `paper` (
 
 /*Data for the table `paper` */
 
-insert  into `paper`(`paperId`,`paperName`,`sum`,`num`,`diseaseName`) values (1,'期末考试狂犬病试卷',10,2,'狂犬病'),(2,'入学考试狂犬病试卷',95,NULL,'狂犬病'),(47,'入学考试试卷修改修改',30,3,'狂犬病'),(48,'入学考试试卷',30,3,'狂犬病'),(49,'23',30,3,'狂犬病'),(50,'测试试卷',30,3,'狂犬病'),(51,'测试试卷11',30,3,'狂犬病'),(52,'测试试卷11111',0,0,'狂犬病'),(53,'测试试卷1111',30,3,'狂犬病');
-
 /*Table structure for table `paperquestion` */
 
 DROP TABLE IF EXISTS `paperquestion`;
@@ -214,8 +212,6 @@ CREATE TABLE `paperquestion` (
 ) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 /*Data for the table `paperquestion` */
-
-insert  into `paperquestion`(`paperQuestionId`,`paperId`,`questionId`) values (1,15,1),(2,15,3),(3,15,4),(4,38,1),(5,38,3),(6,38,4),(7,39,1),(8,39,3),(9,39,4),(10,40,1),(11,40,3),(12,40,4),(13,41,1),(14,41,3),(15,41,4),(16,42,1),(17,42,3),(18,42,4),(19,45,1),(20,45,4),(21,45,3),(22,46,9),(23,46,10),(24,46,11),(25,47,9),(26,47,10),(27,47,11),(28,48,9),(29,48,10),(30,48,11),(31,49,14),(32,49,15),(33,49,16),(34,50,14),(35,50,15),(36,50,16),(37,51,14),(38,51,15),(39,51,16),(40,53,14),(41,53,15),(42,53,16);
 
 /*Table structure for table `question` */
 
@@ -299,7 +295,7 @@ CREATE TABLE `test` (
 
 /*Data for the table `test` */
 
-insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (1,'期末考试','期末考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病'),(2,'入学考试','入学考试狂犬病试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','狂犬病'),(6,'期中考试修改','入学考试考试试卷','2021-04-01 10:00:00','2021-04-01 12:00:00','狂犬病');
+insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (1,'入学考试','入学考试试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','发热'),(2,'期中考试','期中考试试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','犬瘟修改'),(3,'期末考试','期末考试试卷','2021-04-01 10:00:00','2021-04-01 12:00:00','犬瘟修改');
 
 /*Table structure for table `testpaper` */
 
