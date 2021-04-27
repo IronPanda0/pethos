@@ -42,3 +42,10 @@ def removeFromRedis(itemId=0):
     user_id = str(itemId).encode('utf-8')
     data_key = "dyn_data/%s" % user_id
     redis_client.delete(data_key)
+
+# def dictNormalize(dict_list, memberSize, listName):
+#     factor = list.__len__ / memberSize
+#     normList = []
+#     temp = {}
+#     for i in range(factor):
+#         dict_list["%s%s"[]]

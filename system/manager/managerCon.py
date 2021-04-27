@@ -10,6 +10,45 @@ CORS(app, supports_credentials=True)
 
 manager = Blueprint('manager', __name__, url_prefix='/manager')
 
+@manager.route('/userlist', methods=['POST'])
+def userList():
+    userId = request.values["userId"] if "userId" in request.values else None
+    token = request.values["token"] if "token" in request.values else None
+    data = {
+        "userId": userId,
+        "token": token
+    } if userId and token is not None else None
+    auth = authCheck(data)
+    if not auth:
+        app.logger.info("权限不足，用户id:%s的登录态无效"%userId)
+        return ops_renderIllegalJSON()
+    # else后面接权限正常情况下的代码
+    else:
+        if request.method == 'POST':
+            res = request.values
+            page = int(res['page'])
+            per_page = int(res['per_page'])
+            if (page == None):
+                page = 1
+            if (per_page == None):
+                per_page = 10
+            result = User.query.filter_by(authority=2).limit(per_page).offset((page - 1) * per_page)
+            temp = {}
+            data = []
+            if result != None:
+                for i in result:
+                    temp["userid"] = i.userId
+                    temp["username"] = i.userName
+                    temp["password"] = i.passWord
+                    temp["gender"] = i.gender
+                    temp["age"] = i.age
+                    temp["mail"] = i.mail
+                    data.append(temp.copy())
+                return ops_renderJSON(msg="查询成功", data=data)
+            else:
+                return ops_renderErrJSON(msg="暂无用户")
+
+    return ops_renderJSON(msg="查询成功")
 
 @manager.route('/list', methods=['POST'])
 def managerList():
@@ -68,7 +107,7 @@ def deleteUser():
         if request.method == 'POST':
             res = request.values
             username = res['username']
-            delNameD = User.query.filter_(username = username)
+            delNameD = User.query.filter_by(userName = username)
             if delNameD is None:
                 return ops_renderErrJSON(msg="该用户不存在或已被删除！")
 

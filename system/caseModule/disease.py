@@ -3,6 +3,7 @@ from flask_cors import CORS
 from sqlalchemy import text
 import json
 from common.Response import ops_renderErrJSON, ops_renderJSON
+from common.userAuth import authRes
 from model.disease import Disease
 from model.paper import Paper
 from model.test import Test
@@ -149,6 +150,41 @@ def searchDisease():
         data = []
         data.append(temp)
         return ops_renderJSON(msg="查询成功", data=data)
+
+
+@disease.route("/listall", methods=['GET'])
+def listall():
+    auth = authRes(request)
+    # auth = None
+    if auth is not None:
+        return auth
+    # else后面接权限正常情况下的代码
+    elif request.method == 'GET':
+        result = Disease.query.order_by(Disease.categoryName).all()
+        temp = {}
+        data = {}
+        items = []
+        LcategoryName = ""
+        if result is not None:
+            for i in result:
+                temp["diseaseId"] = i.diseaseId
+                temp["diseaseName"] = i.diseaseName
+                # 检查有没有遇到新的类名
+                if LcategoryName != i.categoryName:
+                    if data != {}:
+                        items.append(data.copy())
+                    data = {}
+                LcategoryName = i.categoryName
+                data["categoryName"] = i.categoryName
+                if "diseases" not in data:
+                    data["diseases"] = []
+                data["diseases"].append(temp.copy())
+            # 把最后一个补上
+            items.append(data.copy())
+
+            return ops_renderJSON(msg="查询成功", data=items)
+        else:
+            return ops_renderErrJSON(msg="查询失败，没有数据")
 
 
 @disease.route("/update", methods=['POST'])

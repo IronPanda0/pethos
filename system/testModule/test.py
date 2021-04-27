@@ -79,6 +79,7 @@ def fListTest():
             return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
     return ops_renderJSON(msg="查询成功")
 
+
 # 根据病种名称返回分页所有考试
 @test.route("/list", methods=['POST'])
 def listTest():
@@ -245,8 +246,9 @@ def updateTest():
             data.append(temp)
             return ops_renderJSON(msg="修改试卷成功", data=data)
 
+
 # 根据testId找到PaperID
-@test.route("/paper", methods=['POST','GET'])
+@test.route("/paper", methods=['POST', 'GET'])
 def matchPaper():
     if request.method == 'POST' or 'GET':
         res = request.values
@@ -292,26 +294,29 @@ def questionDetail(questionIdArray):
 
 
 # 根据前端返回的数据计算分数
-@test.route("/score",methods=["post"])
+@test.route("/score", methods=["post"])
 def countScore():
     if request.method == 'POST':
-        res = request.values
-        result = res.getlist('result')
+        res = request.form.to_dict()
+        index = int(len(res) / 2)
+
         questionIdArray = []
-        for i in result:
-            questionIdArray.append(int(i.questionId))
+        for i in range(index):
+            id = res["result[%s][questionId]" % i]
+            questionIdArray.append(int(id))
         #     获取试题答案及分值
         score = 0
         sumscore = 0
         data = questionAnswer(questionIdArray)
         for i in data:
             sumscore += i["score"]
-            for j in result:
-                if i["questionId"] == j["questionId"] and i["answer"] == j["answer"]:
+            for j in range(index):
+                if i["questionId"] == int(res["result[%s][questionId]" % j]) and i["answer"] == int(res["result[%s]["
+                                                                                                        "value]" % j]):
                     score += i["score"]
         data = {
             "score": score,
-            "sumscore" : sumscore
+            "sumscore": sumscore
         }
         return ops_renderJSON(msg="分数计算成功", data=data)
     return ops_renderErrJSON()
@@ -323,8 +328,9 @@ def questionAnswer(questionIdArray):
     temp = {}
     for i in questionIdArray:
         questionD = Question.query.filter_by(questionId=i).first()
-        temp["questionId"] = i
-        temp["score"] = questionD.score
-        temp["answer"] = questionD.answer
-        data.append(temp.copy())
+        if questionD is not None:
+            temp["questionId"] = i
+            temp["score"] = questionD.score
+            temp["answer"] = questionD.answer
+            data.append(temp.copy())
     return data

@@ -2,6 +2,9 @@ from flask import Blueprint, request, make_response, render_template, jsonify, r
 from flask_cors import CORS
 from common.DataHelper import *
 from init import db, app
+from model.case import Case
+from model.disease import Disease
+from model.test import Test
 from model.user import User
 from model.disease import Disease
 from model.case import Case
