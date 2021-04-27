@@ -94,7 +94,7 @@ def updateCase():
         info1 = req['info1']
         info2 = req['info2']
         info3 = req['info3']
-        medicineCount = req['medicineCount']
+        # medicineCount = req['medicineCount']
         caseU = db.session.query(Case).filter_by(caseId=caseId).first()
         oldName = caseU.caseName
         caseNameD = Case.query.filter_by(caseName=caseName).first()
