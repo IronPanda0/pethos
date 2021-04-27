@@ -32,7 +32,7 @@ CREATE TABLE `animal` (
 
 /*Data for the table `animal` */
 
-insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,'10'),(2,'小张',10,10,10,'10'),(3,'小赵',10,10,10,'10'),(4,'小孙',10,10,10,'10'),(5,'小李',10,10,10,'10');
+insert  into `animal`(`animalId`,`animalName`,`age`,`temper`,`breathe`,`heartRate`) values (1,'小王',10,10,10,'10'),(2,'小张',10,10,10,'10'),(3,'小明',10,10,10,'10'),(4,'小孙',10,10,10,'10'),(5,'小李',10,10,10,'10');
 
 /*Table structure for table `case` */
 
@@ -57,7 +57,7 @@ CREATE TABLE `case` (
 
 /*Data for the table `case` */
 
-insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`,`info1`,`info2`,`info3`) values (1,'小李的案例','小李','犬瘟修改','吃不下饭','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL),(2,'小明的案例','小明','发热','体温升高','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `case`(`caseId`,`caseName`,`animalName`,`diseaseName`,`caseInfo`,`videoUrl`,`imageUrl`,`processUrl1`,`processUrl2`,`processUrl3`,`info1`,`info2`,`info3`) values (1,'小李的案例改','小李','犬瘟','111','111','111','111','111','111','111','111','111'),(2,'小明的案例','小明','发热','体温升高','test','testtest',NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `casemedicine` */
 
@@ -68,11 +68,11 @@ CREATE TABLE `casemedicine` (
   `caseId` int(10) unsigned NOT NULL COMMENT '病例ID',
   `medicineId` int(10) unsigned NOT NULL COMMENT '药品ID',
   PRIMARY KEY (`caseMId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 /*Data for the table `casemedicine` */
 
-insert  into `casemedicine`(`caseMId`,`caseId`,`medicineId`) values (1,21,18),(2,21,18),(3,21,19);
+insert  into `casemedicine`(`caseMId`,`caseId`,`medicineId`) values (1,21,18),(2,21,18),(3,21,19),(4,1,18),(5,1,18),(6,1,18),(7,1,18),(8,1,18);
 
 /*Table structure for table `category` */
 
@@ -101,7 +101,7 @@ CREATE TABLE `disease` (
 
 /*Data for the table `disease` */
 
-insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (1,'犬瘟修改','传染病'),(2,'细小','传染病'),(3,'发热','内科病'),(4,'咳嗽','内科病'),(5,'呕吐','内科病'),(6,'腹泻','内科病'),(7,'骨折','外科病'),(8,'外伤','外科病');
+insert  into `disease`(`diseaseId`,`diseaseName`,`categoryName`) values (1,'犬瘟热','传染病'),(2,'细小','传染病'),(3,'发热','内科病'),(4,'咳嗽','内科病'),(5,'呕吐','内科病'),(6,'腹泻','内科病'),(7,'骨折','外科病'),(8,'外伤','外科病');
 
 /*Table structure for table `fee` */
 
@@ -117,7 +117,7 @@ CREATE TABLE `fee` (
 
 /*Data for the table `fee` */
 
-insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (10,21,230,'小李的案例'),(11,23,100,'小明的案例');
+insert  into `fee`(`feeId`,`caseId`,`count`,`caseName`) values (10,21,230,'小李的案例改'),(11,23,100,'小明的案例');
 
 /*Table structure for table `hospital` */
 
@@ -133,7 +133,7 @@ CREATE TABLE `hospital` (
 
 /*Data for the table `hospital` */
 
-insert  into `hospital`(`hospitalId`,`caseName`,`day`,`pay`) values (1,'小明的案例',3,100),(2,'小李的案例',3,200);
+insert  into `hospital`(`hospitalId`,`caseName`,`day`,`pay`) values (1,'小明的案例',3,100),(2,'小李的案例改',3,200);
 
 /*Table structure for table `item` */
 
@@ -295,7 +295,7 @@ CREATE TABLE `test` (
 
 /*Data for the table `test` */
 
-insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (1,'入学考试','入学考试试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','发热'),(2,'期中考试','期中考试试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','犬瘟修改'),(3,'期末考试','期末考试试卷','2021-04-01 10:00:00','2021-04-01 12:00:00','犬瘟修改');
+insert  into `test`(`testId`,`testName`,`paperName`,`beginTime`,`endTime`,`diseaseName`) values (1,'入学考试','入学考试试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','发热'),(2,'期中考试','期中考试试卷','2021-03-01 08:00:00','2021-03-01 10:00:00','犬瘟热'),(3,'期末考试','期末考试试卷','2021-04-01 10:00:00','2021-04-01 12:00:00','犬瘟热');
 
 /*Table structure for table `testpaper` */
 

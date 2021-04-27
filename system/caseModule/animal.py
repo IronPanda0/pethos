@@ -5,25 +5,8 @@ import json
 from init import db
 from model.animal import Animal
 from common.Response import ops_renderErrJSON, ops_renderJSON
-import decimal
 
 animal = Blueprint('animalModule', __name__, url_prefix='/animal')
-
-from flask import Flask as _Flask
-from flask.json import JSONEncoder as _JSONEncoder
-
-
-# decimal不能json化
-class JSONEncoder(_JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        super(JSONEncoder, self).default(o)
-
-
-class Flask(_Flask):
-    json_encoder = JSONEncoder
-
 
 @animal.route("/add", methods=['GET', 'POST'])
 def addAnimal():
@@ -52,7 +35,7 @@ def addAnimal():
         temp = {}
         temp["animalName"] = animalName
         temp["age"] = age
-        temp["temper"] = temper
+        temp["temper"] = round(model_animal.temper, 1)
         temp["breathe"] = breathe
         temp["heartRate"] = heartRate
         data = []
@@ -84,7 +67,7 @@ def listAnimal():
                 temp["animalId"] = i.animalId
                 temp["animalName"] = i.animalName
                 temp["age"] = i.age
-                temp["temper"] = i.temper
+                temp["temper"] = round(i.temper, 1)
                 temp["breathe"] = i.breathe
                 temp["heartRate"] = i.heartRate
                 data.append(temp.copy())
@@ -116,7 +99,7 @@ def fuzzySearchAnimal():
                 temp["animalId"] = i.animalId
                 temp["animalName"] = i.animalName
                 temp["age"] = i.age
-                temp["temper"] = i.temper
+                temp["temper"] = round(i.temper, 1)
                 temp["breathe"] = i.breathe
                 temp["heartRate"] = i.heartRate
                 data.append(temp.copy())
@@ -153,7 +136,7 @@ def updateAnimal():
             temp["animalId"] = animalId
             temp["animalName"] = animalName
             temp["age"] = age
-            temp["temper"] = temper
+            temp["temper"] = round(animalU.temper, )
             temp["breathe"] = breathe
             temp["heartRate"] = heartRate
             data = []
@@ -177,7 +160,7 @@ def deleteanimal():
             temp["animalId"] = animalD.animalId
             temp["animalName"] = animalD.animalName
             temp["age"] = animalD.age
-            temp["temper"] = animalD.temper
+            temp["temper"] = round(animalD.temper)
             temp["breathe"] = animalD.breathe
             temp["heartRate"] = animalD.heartRate
             data = []
