@@ -13,6 +13,7 @@ from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegal
 from common.userAuth import *
 from sqlalchemy.sql import func
 import sha3
+import os
 
 CORS(app, supports_credentials=True)
 # 蓝图对象，前端页面
@@ -321,3 +322,29 @@ def count():
         temp['testCount'] = testCount
         data.append(temp)
         return ops_renderJSON(msg="查询成功", data=data)
+
+
+# created by lyb
+@welcome.route("/uploadPicture", methods=["POST"])
+def uploadPicture():
+    # 获取项目当前绝对路径
+    # 比如我的项目——"E:\pethos"
+    basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    # 通过表单中name值获取图片
+    imgData = request.files["image"]
+    # 设置图片要保存到的路径
+    path = basedir + "/templates/static/upload/img/"
+    # 获取图片名称及后缀名
+    imgName = imgData.filename
+    # 图片path和名称组成图片的保存路径
+    file_path = path + imgName
+    # 保存图片
+    imgData.save(file_path)
+    # url是图片的路径
+    url = '/static/upload/img/' + imgName
+    temp = {}
+    data = []
+    temp["imgName"] = imgName
+    temp["imgPath"] = file_path
+    data.append(temp.copy())
+    return ops_renderJSON(msg="图片上传成功", data=data)

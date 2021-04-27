@@ -23,3 +23,4 @@ class Case(db.Model):
     info2 = db.Column(db.String(100), info='流程简介2')
     info3 = db.Column(db.String(100), info='流程简介3')
     animalId = db.Column(db.Integer)
+    counter = db.Column(db.Integer)
