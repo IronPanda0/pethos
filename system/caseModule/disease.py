@@ -110,19 +110,19 @@ def deleteDisease():
     from init import db
     if request.method == 'POST':
         res = request.values
-        diseaseId = res['diseaseId']
-        diseaseD = db.session.query(Disease).filter_by(diseaseId=diseaseId).first()
+        diseaseName = res['diseaseName']
+        diseaseD = db.session.query(Disease).filter_by(diseaseName=diseaseName).first()
         if diseaseD == None:
             return ops_renderErrJSON(msg="目前没有该病种，请再次确认")
         else:
             diseaseName = diseaseD.diseaseName
-            caseResult = db.session.query(Case).filter(diseaseName=diseaseName).first()
+            caseResult = db.session.query(Case).filter_by(diseaseName=diseaseName).first()
             if caseResult != None:
                 return ops_renderErrJSON(msg="当前该病种还有相关病例，请先删除病例")
-            paperResult = db.session.query(Paper).filter(diseaseName=diseaseName).first()
+            paperResult = db.session.query(Paper).filter_by(diseaseName=diseaseName).first()
             if paperResult != None:
                 return ops_renderErrJSON(msg="当前该病种还有相关试卷，请先删除试卷")
-            testResult = db.session.query(Test).filter(diseaseName=diseaseName).first()
+            testResult = db.session.query(Test).filter_by(diseaseName=diseaseName).first()
             if testResult != None:
                 return ops_renderErrJSON(msg="当前该病种还有相关考试，请先删除考试")
             else:
