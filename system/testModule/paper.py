@@ -4,6 +4,7 @@ from sqlalchemy import text
 import json
 from init import db
 from model.paper import Paper
+from model.test import Test
 from model.question import Question
 from model.paperquestion import Paperquestion
 from common.Response import ops_renderErrJSON, ops_renderJSON
@@ -63,11 +64,16 @@ def deletePaper():
         paperD = db.session.query(Paper).filter_by(paperId=paperId).first()
         if paperD == None:
             return ops_renderErrJSON(msg="目前没有该试卷，请重新确认")
+
         paperId = paperD.paperId
         paperName = paperD.paperName
         diseaseName = paperD.diseaseName
         sum = paperD.sum
         num = paperD.num
+
+        testD = db.session.query(Test).filter_by(paperName=paperName).first()
+        if testD != None:
+            return ops_renderErrJSON(msg="目前该试卷还有对应考试，请先删除考试")
         temp = {}
         temp["paperId"] = paperId
         temp["paperName"] = paperName

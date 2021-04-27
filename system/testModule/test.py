@@ -9,7 +9,7 @@ from model.testpaper import Testpaper
 from model.paperquestion import Paperquestion
 from model.question import Question
 from common.Response import ops_renderErrJSON, ops_renderJSON
-from datetime import datetime, time
+from datetime import datetime
 
 test = Blueprint('test', __name__, url_prefix='/test')
 
@@ -25,8 +25,9 @@ def addTest():
         diseaseName = req['diseaseName']
         beginTimeStr = req['beginTime']
         endTimeStr = req['endTime']
-        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
-        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
+
         # 略过数据合法性检测
         testNameD = Test.query.filter_by(testName=testName).first()
         if (testNameD):
@@ -111,7 +112,6 @@ def listTest():
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有这场考试")
 
-    return ops_renderJSON(msg="查询成功")
 
 
 # 根据病种名称返回分页所有考试

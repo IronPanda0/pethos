@@ -34,11 +34,3 @@ redis_client = FlaskRedis()
 redis_client.init_app(app)
 
 
-class JSONEncoder(_JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        super(JSONEncoder, self).default(o)
-
-
-app.json_encoder = JSONEncoder
