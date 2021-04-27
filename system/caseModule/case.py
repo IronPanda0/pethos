@@ -62,6 +62,7 @@ def addCase():
         model_case.info2 = info2
         model_case.info3 = info3
         model_case.animalId = animalD.animalId
+        model_case.counter = 0
         db.session.add(model_case)
         db.session.commit()
         # json化data
@@ -79,7 +80,6 @@ def addCase():
         temp["info2"] = info2
         temp["info3"] = info3
         temp["animalId"] = animalD.animalId
-
         data = []
         data.append(temp)
         return ops_renderJSON(msg="添加成功", data=data)
@@ -223,6 +223,7 @@ def listCase():
                 temp["info2"] = i.info2
                 temp["info3"] = i.info3
                 temp["usedMedicine"] = allUsedMedicine["%s" % i.caseName]
+                temp["counter"] = i.counter
                 data.append(temp.copy())
             return ops_renderJSON(msg="查询成功", data=data)
         else:
@@ -378,7 +379,7 @@ def info():
     elif request.method == 'POST':
         req = request.values
         caseId = req['caseId']
-        result = Case.query.filter_by(caseId = caseId).first()
+        result = db.session.query(Case).filter_by(caseId = caseId).first()
         animal = Animal.query.filter_by(animalId = result.animalId).first()
         case = {}
         if result and animal is not None:
@@ -397,6 +398,9 @@ def info():
             case["processUrl2"] = result.processUrl2
             case["info3"] = result.info3
             case["processUrl3"] = result.processUrl3
+            result.counter += 1
+            db.session.commit()
+            case["counter"] = result.counter
             return ops_renderJSON(msg="查询成功", data=case)
         else:
             return ops_renderErrJSON(msg="查询失败，没有数据")
