@@ -68,7 +68,7 @@ def deleteUser():
         if request.method == 'POST':
             res = request.values
             username = res['username']
-            delNameD = User.query.filter_(username = username)
+            delNameD = User.query.filter_by(userName = username)
             if delNameD is None:
                 return ops_renderErrJSON(msg="该用户不存在或已被删除！")
 

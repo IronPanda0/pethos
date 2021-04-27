@@ -19,3 +19,7 @@ class Case(db.Model):
     processUrl1 = db.Column(db.String(100), info='流程图片信息1')
     processUrl2 = db.Column(db.String(100), info='流程图片信息2')
     processUrl3 = db.Column(db.String(100), info='流程图片信息3')
+    info1 = db.Column(db.String(100), info='流程图片信息1')
+    info2 = db.Column(db.String(100), info='流程图片信息2')
+    info3 = db.Column(db.String(100), info='流程图片信息3')
+    animalId = db.Column(db.Integer, info='宠物ID')

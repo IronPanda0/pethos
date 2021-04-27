@@ -75,6 +75,7 @@ def listAnimal():
             per_page = 10
         else:
             per_page = int(per_page)
+
         result = db.session.query(Animal).limit(per_page).offset((page - 1) * per_page)
         temp = {}
         data = []

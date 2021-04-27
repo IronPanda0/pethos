@@ -1,14 +1,24 @@
+import decimal
+
 from flask import Blueprint, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from sqlalchemy import text
 import json
-from init import db
+
+from common.userAuth import authRes
+from init import db, app
+from model.animal import Animal
 from model.case import Case
 from model.medicine import Medicine
 from model.casemedicine import Casemedicine
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
+from flask import Flask as _Flask
+
+
 case = Blueprint('caseModule', __name__, url_prefix='/case')
+
+
 
 
 @case.route("/add", methods=['GET', 'POST'])
@@ -160,3 +170,64 @@ def addCaseMedicine():
         data = []
         data.append(temp)
         return ops_renderJSON(msg="病例添加药品成功", data=data)
+
+
+@case.route("/animal",methods=["POST"])
+def animal():
+    auth = authRes(request)
+    # auth = None
+    if auth is not None:
+        return auth
+    # else后面接权限正常情况下的代码
+    elif request.method == 'POST':
+        req = request.values
+        diseaseName = req['diseaseName']
+        result = Case.query.filter_by(diseaseName = diseaseName).all()
+        temp = {}
+        animals = []
+        if result is not None:
+            for i in result:
+                temp["animalId"] = i.animalId
+                temp["animalName"] = i.animalName
+                temp["imageUrl"] = i.imageUrl
+                temp["caseId"] = i.caseId
+                animals.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=animals)
+        else:
+            return ops_renderErrJSON(msg="查询失败，没有数据")
+
+
+@case.route("/info",methods=["POST"])
+def info():
+    auth = authRes(request)
+    # auth = None
+    if auth is not None:
+        return auth
+    # else后面接权限正常情况下的代码
+    elif request.method == 'POST':
+        req = request.values
+        caseId = req['caseId']
+        result = Case.query.filter_by(caseId = caseId).first()
+        animal = Animal.query.filter_by(animalId = result.animalId).first()
+        case = {}
+        if result and animal is not None:
+            case["caseId"] = result.caseId
+            case["animalName"] = result.animalName
+            case["age"] = animal.age
+            case["temper"] = animal.temper
+            case["breathe"] = animal.breathe
+            case["heartRate"] = animal.heartRate
+            case["imageUrl"] = result.imageUrl
+            case["caseinfo"] = result.caseInfo
+            case["info1"] = result.info1
+            case["processUrl1"] = result.processUrl1
+            case["movieUrl"] = result.videoUrl
+            case["info2"] = result.info2
+            case["processUrl2"] = result.processUrl2
+            case["info3"] = result.info3
+            case["processUrl3"] = result.processUrl3
+            return ops_renderJSON(msg="查询成功", data=case)
+        else:
+            return ops_renderErrJSON(msg="查询失败，没有数据")
+
+

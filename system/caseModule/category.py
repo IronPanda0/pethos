@@ -8,6 +8,7 @@ from common.Response import ops_renderErrJSON, ops_renderJSON
 
 category = Blueprint('categoryModule', __name__, url_prefix='/category')
 
+
 @category.route("/add", methods=['GET', 'POST'])
 def addCategory():
     # html文件修改为新建题目的文件
@@ -49,17 +50,18 @@ def searchCategory():
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有分类")
 
+
 @category.route("/update", methods=['POST'])
 def updateCategory():
     if request.method == 'POST':
         req = request.values
         categoryNameOld = req['categoryNameOld']
         categoryNameNew = req['categoryNameNew']
-        categoryNameD = db.session.query(Category).filter_by(categoryName = categoryNameNew).first()
+        categoryNameD = db.session.query(Category).filter_by(categoryName=categoryNameNew).first()
         if categoryNameD:
             return ops_renderErrJSON(msg="分类已经存在，请换一个再试试。")
         else:
-            categoryNameU = db.session.query(Category).filter_by(categoryName = categoryNameOld).first()
+            categoryNameU = db.session.query(Category).filter_by(categoryName=categoryNameOld).first()
             if categoryNameU != None:
                 categoryNameU.categoryName = categoryNameNew
                 db.session.commit()

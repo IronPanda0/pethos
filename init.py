@@ -1,8 +1,11 @@
+import decimal
+
 from flask import Flask, Blueprint, render_template
 from flask_login import LoginManager
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_redis import FlaskRedis
+from flask.json import JSONEncoder as _JSONEncoder
 
 
 class CustomFlask(Flask):
@@ -29,3 +32,13 @@ db = SQLAlchemy(app)
 # 这里的redis用来存放token
 redis_client = FlaskRedis()
 redis_client.init_app(app)
+
+
+class JSONEncoder(_JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        super(JSONEncoder, self).default(o)
+
+
+app.json_encoder = JSONEncoder
