@@ -6,7 +6,7 @@ from sqlalchemy import text
 import json
 
 from common.userAuth import authRes
-from init import db, app
+from init import db
 from model.animal import Animal
 from model.case import Case
 from model.animal import Animal
@@ -39,11 +39,14 @@ def addCase():
         info2 = req['info2']
         info3 = req['info3']
         caseNameD = Case.query.filter_by(caseName=caseName).first()
+        animalD = Animal.query.filter_by(animalName = animalName).first()
         if caseNameD:
-            return ops_renderErrJSON(msg="相同题干已存在，请再换一个试试")
+            return ops_renderErrJSON(msg="相同病例已存在，请再换一个试试")
         diseaseNameD = Disease.query.filter_by(diseaseName=diseaseName).first()
-        if diseaseNameD == None:
+        if diseaseNameD is None:
             return ops_renderErrJSON(msg="目前没有该病种，请换一个试试")
+        if animalD is None:
+            return ops_renderErrJSON(msg="不存在该宠物")
         # 注册写入数据库
         model_case = Case()
         model_case.caseName = caseName
@@ -58,6 +61,7 @@ def addCase():
         model_case.info1 = info1
         model_case.info2 = info2
         model_case.info3 = info3
+        model_case.animalId = animalD.animalId
         db.session.add(model_case)
         db.session.commit()
         # json化data
@@ -74,6 +78,7 @@ def addCase():
         temp["info1"] = info1
         temp["info2"] = info2
         temp["info3"] = info3
+        temp["animalId"] = animalD.animalId
 
         data = []
         data.append(temp)
