@@ -44,8 +44,9 @@ def listFee():
                 total += medicineD.pay
                 medicineStr = medicineStr + ' ' + medicineName
             hospitalD = db.session.query(Hospital).filter_by(caseName=caseName).first()
-            medicineList.append("住院费用")
-            total += hospitalD.pay
+            if hospitalD != None:
+                medicineList.append("住院费用")
+                total += hospitalD.pay
             # 生成该病例使用过的药品名称键list
             medicineKeys = []
             for i1 in medicineList:
@@ -54,7 +55,8 @@ def listFee():
             medicineCount = {}
             for j1 in medicineKeys:
                 medicineCount[j1] = medicineStr.count(j1)
-            medicineCount["住院费用"] = hospitalD.pay
+            if hospitalD != None:
+                medicineCount["住院费用"] = hospitalD.pay
             allUsedMedicine["%s" % caseName] = medicineCount
             model_fee = Fee()
             model_fee.caseId = i.caseId

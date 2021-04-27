@@ -6,6 +6,9 @@ from model.case import Case
 from model.disease import Disease
 from model.test import Test
 from model.user import User
+from model.disease import Disease
+from model.case import Case
+from model.test import Test
 from common.Response import ops_renderErrJSON, ops_renderJSON, ops_renderIllegalJSON
 from common.userAuth import *
 from sqlalchemy.sql import func
@@ -302,6 +305,9 @@ def ifandfor():
     # 传进去一个字典，引号中的name对应前端变量名
     return render_template("index.html", **context)
 
+
+# created by lyb
+# 返回病种、病例、测试总数
 @welcome.route("/count", methods=["POST"])
 def count():
     if request.method == 'POST':

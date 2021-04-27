@@ -4,6 +4,10 @@ from sqlalchemy import text
 import json
 from init import db
 from model.category import Category
+from model.disease import Disease
+from model.case import Case
+from model.paper import Paper
+from model.test import Test
 from common.Response import ops_renderErrJSON, ops_renderJSON
 
 category = Blueprint('categoryModule', __name__, url_prefix='/category')
@@ -11,10 +15,7 @@ category = Blueprint('categoryModule', __name__, url_prefix='/category')
 
 @category.route("/add", methods=['GET', 'POST'])
 def addCategory():
-    # html文件修改为新建题目的文件
-    if request.method == "GET":
-        return render_template("提交分类.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         req = request.values
         # 暂时略过合法性检测
         categoryName = req['categoryName']
@@ -55,22 +56,41 @@ def searchCategory():
 def updateCategory():
     if request.method == 'POST':
         req = request.values
-        categoryNameOld = req['categoryNameOld']
-        categoryNameNew = req['categoryNameNew']
-        categoryNameD = db.session.query(Category).filter_by(categoryName=categoryNameNew).first()
+        categoryId = req['categoryId']
+        categoryName = req['categoryName']
+        categoryNameD = db.session.query(Category).filter_by(categoryName=categoryName).first()
         if categoryNameD:
             return ops_renderErrJSON(msg="分类已经存在，请换一个再试试。")
         else:
-            categoryNameU = db.session.query(Category).filter_by(categoryName=categoryNameOld).first()
-            if categoryNameU != None:
-                categoryNameU.categoryName = categoryNameNew
-                db.session.commit()
-                # json化data
-                temp = {}
-                temp["categoryName"] = categoryNameNew
-                data = []
-                data.append(temp)
-                return ops_renderJSON(msg="修改成功", data=data)
-            else:
-                return ops_renderErrJSON(msg="不存在这个分类，无法修改")
-    return "修改成功"
+            categoryNameU = db.session.query(Category).filter_by(categoryID=categoryId).first()
+            oldName = categoryNameU.categoryName
+            resultDisease = db.session.query(Disease).filter_by(categoryName=oldName).all()
+            if resultDisease != None:
+                for i in resultDisease:
+                    i.categoryName = categoryName
+            categoryNameU.categoryName = categoryName
+            db.session.commit()
+            # json化data
+            temp = {}
+            temp["categoryID"] = categoryNameU.categoryID
+            temp["categoryName"] = categoryName
+            data = []
+            data.append(temp)
+            return ops_renderJSON(msg="修改成功", data=data)
+
+
+@category.route("/delete", methods=['POST'])
+def deleteDisease():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        categoryId = res['categoryId']
+        categoryD = db.session.query(Category).filter_by(categoryID=categoryId).first()
+        categoryName = categoryD.categoryName
+        diseaseD = db.session.query(Disease).filter_by(categoryName=categoryName).first()
+        if diseaseD != None:
+            return ops_renderErrJSON(msg="目前该分类还有病种，请确认后删除")
+        else:
+            db.session.delete(categoryD)
+            db.session.commit()
+            return ops_renderJSON(msg="删除成功")

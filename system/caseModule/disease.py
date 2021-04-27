@@ -5,8 +5,11 @@ import json
 from common.Response import ops_renderErrJSON, ops_renderJSON
 from common.userAuth import authRes
 from model.disease import Disease
+from model.paper import Paper
+from model.test import Test
 from model.case import Case
-from system.view import welcome
+from model.category import Category
+
 disease = Blueprint('diseaseModule', __name__, url_prefix='/disease')
 
 
@@ -54,44 +57,79 @@ def listDisease():
             per_page = 10
         else:
             per_page = int(per_page)
-        if (len(categoryName) == 0):
+        if (categoryName == 'all'):
             result = Disease.query.limit(per_page).offset((page - 1) * per_page)
         else:
             result = Disease.query.filter_by(categoryName=categoryName).limit(per_page).offset((page - 1) * per_page)
-            temp = {}
-            data = []
-            if (result.count() != 0):
-                for i in result:
-                    temp["diseaseId"] = i.diseaseId
-                    temp["diseaseName"] = i.diseaseName
-                    temp["categoryName"] = i.categoryName
-                    data.append(temp.copy())
-                return ops_renderJSON(msg="查询成功", data=data)
-            else:
-                return ops_renderErrJSON(msg="查询失败，目前该分类没有疾病")
+        temp = {}
+        data = []
+        if (result.count() != 0):
+            for i in result:
+                temp["diseaseId"] = i.diseaseId
+                temp["diseaseName"] = i.diseaseName
+                temp["categoryName"] = i.categoryName
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前该分类没有疾病")
 
 
-# 根据diseaeName删除病种
+@disease.route("/fuzzy", methods=['POST'])
+def fuzzySearchDisease():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        diseaseName = res['diseaseName']
+        page = res['page']
+        per_page = res['per_page']
+        if (page == ''):
+            page = 1
+        else:
+            page = int(page)
+        if (per_page == ''):
+            per_page = 10
+        else:
+            per_page = int(per_page)
+        result = db.session.query(Disease).filter(Disease.diseaseName.like('%%%%%s%%%%' % diseaseName)).limit(
+            per_page).offset((page - 1) * per_page)
+        temp = {}
+        data = []
+        if (result.count() != 0):
+            for i in result:
+                temp["diseaseId"] = i.diseaseId
+                temp["diseaseName"] = i.diseaseName
+                temp["categoryName"] = i.categoryName
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有疾病")
+
+
+# 根据diseaeId删除病种
 @disease.route("/delete", methods=['POST'])
 def deleteDisease():
     from init import db
     if request.method == 'POST':
         res = request.values
-        diseaseName = res['diseaseName']
-        diseaseNameD = db.session.query(Disease).filter(Disease.diseaseName == diseaseName).first()
-        if diseaseNameD == None:
+        diseaseId = res['diseaseId']
+        diseaseD = db.session.query(Disease).filter_by(diseaseId=diseaseId).first()
+        if diseaseD == None:
             return ops_renderErrJSON(msg="目前没有该病种，请再次确认")
-        categoryName = diseaseNameD.categoryName
-        temp = {}
-        temp["diseaseName"] = diseaseName
-        temp["categoryName"] = categoryName
-        data = []
-        data.append(temp)
-
-        db.session.delete(diseaseNameD)
-        db.session.commit()
-
-        return ops_renderJSON(msg="删除成功", data=data)
+        else:
+            diseaseName = diseaseD.diseaseName
+            caseResult = db.session.query(Case).filter(diseaseName=diseaseName).first()
+            if caseResult != None:
+                return ops_renderErrJSON(msg="当前该病种还有相关病例，请先删除病例")
+            paperResult = db.session.query(Paper).filter(diseaseName=diseaseName).first()
+            if paperResult != None:
+                return ops_renderErrJSON(msg="当前该病种还有相关试卷，请先删除试卷")
+            testResult = db.session.query(Test).filter(diseaseName=diseaseName).first()
+            if testResult != None:
+                return ops_renderErrJSON(msg="当前该病种还有相关考试，请先删除考试")
+            else:
+                db.session.delete(diseaseD)
+                db.session.commit()
+                return ops_renderJSON(msg="删除成功")
 
 
 @disease.route("/search", methods=['POST'])
@@ -147,3 +185,41 @@ def listall():
             return ops_renderJSON(msg="查询成功", data=items)
         else:
             return ops_renderErrJSON(msg="查询失败，没有数据")
+
+
+@disease.route("/update", methods=['POST'])
+def updateDisease():
+    from init import db
+    if request.method == 'POST':
+        req = request.values
+        diseaseId = req['diseaseId']
+        categoryName = req['categoryName']
+        diseaseName = req['diseaseName']
+        categoryNameD = db.session.query(Category).filter_by(categoryName=categoryName).first()
+        if categoryNameD == None:
+            return ops_renderErrJSON(msg="目前没有该分类，请确认后再试试。")
+        else:
+            diseaseU = db.session.query(Disease).filter_by(diseaseId=diseaseId).first()
+            oldName = diseaseU.diseaseName
+            resultPaper = db.session.query(Paper).filter_by(diseaseName=oldName).all()
+            if resultPaper != None:
+                for i in resultPaper:
+                    i.diseaseName = diseaseName
+            resultTest = db.session.query(Test).filter_by(diseaseName=oldName).all()
+            if resultTest != None:
+                for i in resultTest:
+                    i.diseaseName = diseaseName
+            resultCase = db.session.query(Case).filter_by(diseaseName=oldName).all()
+            if resultCase != None:
+                for i in resultCase:
+                    i.diseaseName = diseaseName
+            diseaseU.diseaseName = diseaseName
+            db.session.commit()
+            # json化data
+            temp = {}
+            temp["diseaseId"] = diseaseId
+            temp["categoryName"] = categoryName
+            temp["diseaseName"] = diseaseName
+            data = []
+            data.append(temp)
+            return ops_renderJSON(msg="修改成功", data=data)

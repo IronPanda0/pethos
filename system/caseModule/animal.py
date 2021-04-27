@@ -92,6 +92,37 @@ def listAnimal():
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有宠物")
 
+@animal.route("/fuzzy", methods=['POST'])
+def fuzzySearchAnimal():
+    if request.method == 'POST':
+        res = request.values
+        page = res['page']
+        per_page = res['per_page']
+        animalName = res['animalName']
+        if (page == ''):
+            page = 1
+        else:
+            page = int(page)
+        if (per_page == ''):
+            per_page = 10
+        else:
+            per_page = int(per_page)
+        result = db.session.query(Animal).filter(Animal.animalName.like('%%%%%s%%%%' % animalName)).limit(
+            per_page).offset((page - 1) * per_page)
+        temp = {}
+        data = []
+        if (result != None):
+            for i in result:
+                temp["animalId"] = i.animalId
+                temp["animalName"] = i.animalName
+                temp["age"] = i.age
+                temp["temper"] = i.temper
+                temp["breathe"] = i.breathe
+                temp["heartRate"] = i.heartRate
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有宠物")
 
 @animal.route("/update", methods=['POST'])
 def updateAnimal():

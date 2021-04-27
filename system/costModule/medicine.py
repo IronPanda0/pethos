@@ -188,3 +188,40 @@ def listMedicine():
             return ops_renderJSON(msg="查询成功", data=data)
         else:
             return ops_renderErrJSON(msg="查询失败，目前没有药品")
+
+
+@medicine.route("/fuzzy", methods=['POST'])
+def fuzzySearchMedicine():
+    from init import db
+    if request.method == 'POST':
+        res = request.values
+        medicineName = res['medicineName']
+        page = res['page']
+        per_page = res['per_page']
+        type = res['type']
+        if (page == ''):
+            page = 1
+        else:
+            page = int(page)
+        if (per_page == ''):
+            per_page = 10
+        else:
+            per_page = int(per_page)
+        result = db.session.query(Medicine).filter(Medicine.name.like('%%%%%s%%%%' % medicineName)).limit(
+            per_page).offset((page - 1) * per_page)
+        temp = {}
+        data = []
+        if (result.count() != 0):
+            for i in result:
+                temp["name"] = i.name
+                temp["intro"] = i.intro
+                temp["storage"] = i.storage
+                temp["roomName"] = i.roomName
+                temp['pay'] = i.pay
+                temp["imgUrl"] = i.imgUrl
+                temp["type"] = i.type
+                temp["medicineId"] = i.medicineId
+                data.append(temp.copy())
+            return ops_renderJSON(msg="查询成功", data=data)
+        else:
+            return ops_renderErrJSON(msg="查询失败，目前没有药品")
