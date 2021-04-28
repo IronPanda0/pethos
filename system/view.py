@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, request, make_response, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
 from common.DataHelper import *
@@ -28,6 +30,23 @@ def index():
             elif request.values['entrance'] == "manager":
                 return render_template("index_b.html")
     return render_template('index.html')
+
+
+@welcome.route('/try')
+def Atry():
+    return render_template("tryToUpload.html")
+
+
+@welcome.route('/uploadFiles', methods=["POST"])
+def uploadFiles():
+    req = request.values
+    req2 = request.files
+    filelist = req2.getlist("file")
+    file_dir = os.path.join(os.getcwd(), app.config["UPLOAD_FOLDER"])
+    for i in filelist:
+        file_path = os.path.join(file_dir, i.filename)
+        i.save(file_path)
+    return "haha"
 
 
 @welcome.route('/login', methods=['POST'])
@@ -104,7 +123,7 @@ def register():
         model_user = User()
         model_user.userName = username
         model_user.passWord = password
-        model_user.mail = req['email']
+        model_user.mail = req['email'] if 'mail' in req else None
         # 默认权限为2，即实习生
         model_user.authority = 2
 
@@ -321,3 +340,38 @@ def count():
         temp['testCount'] = testCount
         data.append(temp)
         return ops_renderJSON(msg="查询成功", data=data)
+
+
+@welcome.route("/uploadPicture", methods=["POST"])
+def uploadPicture():
+    # 获取项目当前绝对路径
+    # req = request.files
+    # # 比如我的项目——"E:\pethos"
+    # basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    # # 通过表单中name值获取图片
+    # imgData = request.files["image"]
+    # # 设置图片要保存到的路径
+    # path = basedir + "/templates/static/img/"
+    # # 获取图片名称及后缀名
+    # imgName = imgData.filename
+    # # 图片path和名称组成图片的保存路径
+    # file_path = path + imgName
+    # # 保存图片
+    # imgData.save(file_path)
+    # # url是图片的路径
+    # url = '/static/img' + imgName
+    # temp = {}
+    # data = []
+    # temp["imgName"] = imgName
+    # temp["imgPath"] = url
+    # data.append(temp.copy())
+    # return ops_renderJSON(msg="图片上传成功", data=data)
+    req2 = request.files
+    filelist = req2.getlist("image")
+    file_dir = os.path.join(os.getcwd(), app.config["UPLOAD_PIC_FOLDER"])
+    data = {}
+    for i in filelist:
+        file_path = os.path.join(file_dir, i.filename)
+        i.save(file_path)
+        data = {"imgPath": app.config['SEND_PIC_FOLDER']+i.filename}
+    return ops_renderJSON(data=data)

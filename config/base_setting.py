@@ -8,4 +8,6 @@ SECRET_KEY = "123456"
 
 SQLALCHEMY_DATABASE_URI = "mysql://root:5c7986b3E@localhost/pethos"
 REDIS_URL = "redis://:123456@localhost:6379/0"
-DOMAIN = {"www":"http://127.0.0.1:5000/"}
+DOMAIN = {"www": "http://127.0.0.1:5000/"}
+UPLOAD_PIC_FOLDER = 'templates/static/img/'
+SEND_PIC_FOLDER = './static/img/'

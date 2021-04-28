@@ -1,5 +1,5 @@
 import decimal
-
+from init import app
 from flask import Blueprint, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from sqlalchemy import text
@@ -30,8 +30,9 @@ def addCase():
         animalName = req['animalName']
         diseaseName = req['diseaseName']
         caseInfo = req['caseInfo']
-        videoUrl = req['videoUrl']
-        imageUrl = req['imageUrl']
+        videoUrl = req['imageUrl']
+        # videoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+        imageUrl = req['processUrl1']
         processUrl1 = req['processUrl1']
         processUrl2 = req['processUrl2']
         processUrl3 = req['processUrl3']
@@ -389,7 +390,7 @@ def info():
             case["temper"] = animal.temper
             case["breathe"] = animal.breathe
             case["heartRate"] = animal.heartRate
-            case["imageUrl"] = result.imageUrl
+            case["imageUrl"] =result.imageUrl
             case["caseinfo"] = result.caseInfo
             case["info1"] = result.info1
             case["processUrl1"] = result.processUrl1

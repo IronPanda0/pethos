@@ -2,6 +2,8 @@ from flask import Blueprint, request, make_response, render_template, jsonify
 from flask_cors import CORS
 from sqlalchemy import text
 import json
+
+from common.userAuth import authRes
 from init import db
 from model.test import Test
 from model.paper import Paper
@@ -10,6 +12,8 @@ from model.paperquestion import Paperquestion
 from model.question import Question
 from common.Response import ops_renderErrJSON, ops_renderJSON
 from datetime import datetime, time
+
+from model.testuser import Testuser
 
 test = Blueprint('test', __name__, url_prefix='/test')
 
@@ -25,13 +29,14 @@ def addTest():
         diseaseName = req['diseaseName']
         beginTimeStr = req['beginTime']
         endTimeStr = req['endTime']
-        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
-        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
         # 略过数据合法性检测
         testNameD = Test.query.filter_by(testName=testName).first()
         if (testNameD):
             return ops_renderErrJSON(msg="相同考试已存在，请再换一个试试")
         paperD = Paper.query.filter_by(paperId=paperId).first()
+
         # 写入数据库
         model_test = Test()
         model_test.testName = testName
@@ -40,6 +45,12 @@ def addTest():
         model_test.endTime = endTime
         model_test.diseaseName = diseaseName
         db.session.add(model_test)
+        db.session.flush()
+        curTestId = model_test.testId
+        model_testPaper = Testpaper()
+        model_testPaper.testId = curTestId
+        model_testPaper.paperId = paperId
+        db.session.add(model_testPaper)
         db.session.commit()
         temp = {}
         temp["testName"] = testName
@@ -56,6 +67,9 @@ def addTest():
 # 前台返回根据病种名返回所有考试
 @test.route("/flist", methods=['POST'])
 def fListTest():
+    auth = authRes(request)
+    if auth is not None:
+        return auth
     if request.method == 'POST':
         res = request.values
         diseaseName = res['diseaseName[0]'] if 'diseaseName[0]' in res else res['diseaseName']
@@ -83,6 +97,7 @@ def fListTest():
 # 根据病种名称返回分页所有考试
 @test.route("/list", methods=['POST'])
 def listTest():
+
     if request.method == 'POST':
         res = request.values
         page = int(res['page'])
@@ -205,8 +220,9 @@ def deleteTest():
         return ops_renderJSON(msg="删除成功", data=data)
 
 
-@test.route("/update", methods=['POST'])
+@test.route("/update", methods=['POST','GET'])
 def updateTest():
+    asfadf = 1
     if request.method == 'POST':
         req = request.values
         testId = req['testId']
@@ -215,14 +231,14 @@ def updateTest():
         diseaseName = req['diseaseName']
         beginTimeStr = req['beginTime']
         endTimeStr = req['endTime']
-        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
-        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S.000Z')
+        beginTime = datetime.strptime(beginTimeStr, '%Y-%m-%d %H:%M:%S')
+        endTime = datetime.strptime(endTimeStr, '%Y-%m-%d %H:%M:%S')
 
         testNameD = db.session.query(Test).filter_by(testName=testName).first()
         if testNameD != None:
             return ops_renderErrJSON(msg="目前已有该考试，请确认后再试试。")
         paperNameD = db.session.query(Paper).filter_by(paperName=paperName).first()
-        if paperNameD != None:
+        if paperNameD is None:
             return ops_renderErrJSON(msg="没有该试卷，请确认后再试试。")
         else:
             testU = db.session.query(Test).filter_by(testId=testId).first()
@@ -250,15 +266,18 @@ def updateTest():
 # 根据testId找到PaperID
 @test.route("/paper", methods=['POST', 'GET'])
 def matchPaper():
+    auth = authRes(request)
+    if auth is not None:
+        return auth
     if request.method == 'POST' or 'GET':
         res = request.values
         # 由于前端拿到的数组是字符串数组，需要转化成整型
         testId = res.getlist('testId')
         testId = list(map(int, testId))
-        paperIdD = Testpaper.query.filter_by(testId=testId).first()
+        paperIdD = Testpaper.query.filter_by(testId=testId[0]).first()
 
         if paperIdD is None:
-            return ops_renderErrJSON(msg="试卷尚未创建！")
+            return ops_renderJSON(msg="试卷尚未创建！")
         data = getQuestion(paperId=paperIdD.paperId)
         return ops_renderJSON(msg="成功获取试题集！", data=data)
     return ops_renderErrJSON()
@@ -296,6 +315,10 @@ def questionDetail(questionIdArray):
 # 根据前端返回的数据计算分数
 @test.route("/score", methods=["post"])
 def countScore():
+    auth = authRes(request)
+    if auth is not None:
+        return auth
+    userId = request.headers.environ['HTTP_USERID'] if 'HTTP_USERID' in request.headers.environ else None
     if request.method == 'POST':
         res = request.form.to_dict()
         index = int(len(res) / 2)
@@ -318,6 +341,12 @@ def countScore():
             "score": score,
             "sumscore": sumscore
         }
+        model = Testuser()
+        model.userId = userId
+        model.testId = res['testId']
+        model.score = score
+        db.session.add(model)
+        db.session.commit()
         return ops_renderJSON(msg="分数计算成功", data=data)
     return ops_renderErrJSON()
 
@@ -334,3 +363,25 @@ def questionAnswer(questionIdArray):
             temp["answer"] = questionD.answer
             data.append(temp.copy())
     return data
+
+
+# 测评记录查询
+@test.route('/getscore',methods=['POST'])
+def getscore():
+    userId = request.headers.environ['HTTP_USERID'] if 'HTTP_USERID' in request.headers.environ else None
+    scoreD = Testuser.query.filter_by(userId = userId).all()
+    auth = authRes(request)
+    if auth is not None:
+        return auth
+    if scoreD is not None:
+        data=[]
+        temp={}
+        for i in scoreD:
+            temp['testId'] = i.testId
+            temp['score'] = i.score
+            TestD = Test.query.filter_by(testId = i.testId).first()
+            if TestD is None:
+                return ops_renderErrJSON(msg="该考试不存在")
+            temp['testName'] = TestD.testName
+            data.append(temp.copy())
+        return ops_renderJSON(data=data)
