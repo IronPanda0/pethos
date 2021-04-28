@@ -11,7 +11,7 @@ from model.testpaper import Testpaper
 from model.paperquestion import Paperquestion
 from model.question import Question
 from common.Response import ops_renderErrJSON, ops_renderJSON
-from datetime import datetime, time
+from datetime import datetime
 
 from model.testuser import Testuser
 
@@ -36,7 +36,6 @@ def addTest():
         if (testNameD):
             return ops_renderErrJSON(msg="相同考试已存在，请再换一个试试")
         paperD = Paper.query.filter_by(paperId=paperId).first()
-
         # 写入数据库
         model_test = Test()
         model_test.testName = testName
@@ -97,7 +96,6 @@ def fListTest():
 # 根据病种名称返回分页所有考试
 @test.route("/list", methods=['POST'])
 def listTest():
-
     if request.method == 'POST':
         res = request.values
         page = int(res['page'])
@@ -222,7 +220,6 @@ def deleteTest():
 
 @test.route("/update", methods=['POST','GET'])
 def updateTest():
-    asfadf = 1
     if request.method == 'POST':
         req = request.values
         testId = req['testId']

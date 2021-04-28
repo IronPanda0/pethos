@@ -61,6 +61,7 @@ def updateUserRole():
         else:
             userRoleU = db.session.query(Userrole).filter_by(userRoleId=userRoleId).first()
             if userRoleU != None:
+                userRoleU.userName = userName
                 userRoleU.role = role
                 userRoleU.content = content
                 userRoleU.process = process
